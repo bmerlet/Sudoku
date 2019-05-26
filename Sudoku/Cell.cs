@@ -7,7 +7,7 @@ namespace Sudoku
     /// <summary>
     /// Cell of sudoku puzzle
     /// </summary>
-    public class Cell
+    internal class Cell
     {
         // Value of the cell (0-9), 0 means unmarked
         public uint Value { get; private set; }
@@ -45,7 +45,7 @@ namespace Sudoku
 
         public void Unmark(uint round)
         {
-            if (Round == round)
+            if (Round == round || round == 0)
             {
                 Value = 0;
                 Round = 0;
@@ -146,6 +146,17 @@ namespace Sudoku
             }
 
             return result;
+        }
+
+        public void Clone(Cell src)
+        {
+            Value = src.Value;
+            Round = src.Round;
+            Type = src.Type;
+            for (int i = 0; i < possible.Length; i++)
+            {
+                possible[i] = src.possible[i];
+            }
         }
 
 

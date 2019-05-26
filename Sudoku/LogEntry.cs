@@ -6,7 +6,7 @@ using Toolbox.Attributes;
 
 namespace Sudoku
 {
-    public class LogEntry
+    internal class LogEntry
     {
         public readonly uint Round;
         public readonly EMarkType Type;

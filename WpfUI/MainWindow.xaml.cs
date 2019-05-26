@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 using Sudoku;
+using WpfUI.Logic;
 
 namespace WpfUI
 {
@@ -22,12 +23,56 @@ namespace WpfUI
     /// </summary>
     public partial class MainWindow : Window
     {
+        private MainWindowLogic logic;
         public MainWindow()
         {
+            logic = new MainWindowLogic();
+            DataContext = logic;
+
             InitializeComponent();
 
-            var creator = new Creator();
-            creator.GeneratePuzzle();
+            Loaded += (s, e) => logic.OnLoaded();
+            board.MouseDown += OnMouseDown;
+
+        }
+
+        private void OnMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            var point = Mouse.GetPosition(board);
+
+            uint row = 0;
+            uint col = 0;
+            double accumulatedHeight = board.Margin.Top;
+            double accumulatedWidth = board.Margin.Left;
+
+            // calc row mouse was over
+            foreach (var rowDefinition in board.RowDefinitions)
+            {
+                accumulatedHeight += rowDefinition.ActualHeight;
+                if (accumulatedHeight >= point.Y)
+                    break;
+                row++;
+            }
+
+            // calc col mouse was over
+            foreach (var columnDefinition in board.ColumnDefinitions)
+            {
+                accumulatedWidth += columnDefinition.ActualWidth;
+                if (accumulatedWidth >= point.X)
+                    break;
+                col++;
+            }
+
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                logic.BoardLogic.OnMouseLeft(row, col);
+                e.Handled = true;
+            }
+            else if (e.RightButton == MouseButtonState.Pressed)
+            {
+                logic.BoardLogic.OnMouseRight(row, col);
+                e.Handled = true;
+            }
         }
     }
 }

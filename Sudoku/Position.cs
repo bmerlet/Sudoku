@@ -7,7 +7,7 @@ namespace Sudoku
     /// <summary>
     /// Position of cell in a sudoku puzzle - immutable
     /// </summary>
-    public class Position
+    internal class Position
     {
         public const int GRID_SIZE = 3;
         public const int ROW_COL_SEC_SIZE = GRID_SIZE * GRID_SIZE;
@@ -43,6 +43,12 @@ namespace Sudoku
             StartSectionCell =
                 ((Cell / SEC_GROUP_SIZE) * SEC_GROUP_SIZE) + // Row
                 ((Column) / GRID_SIZE) * GRID_SIZE; // column
+        }
+
+        // cell (0-80)
+        static public Position GetCellFromCell(uint cell)
+        {
+            return PositionCache[cell];
         }
 
         // Row (0-8) and column (0-8) => cell (0-80)
@@ -154,6 +160,10 @@ namespace Sudoku
                 }
             }
         }
+
+        public Position Opposite => GetCell(SEC_GROUP_SIZE - 1 - Row, SEC_GROUP_SIZE - 1 - Column);
+        public Position HorizontalFlip => GetCell(Row, SEC_GROUP_SIZE - 1 - Column);
+        public Position VerticalFlip => GetCell(SEC_GROUP_SIZE - 1 - Row, Column);
 
         public override bool Equals(object obj)
         {

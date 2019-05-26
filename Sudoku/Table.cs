@@ -6,9 +6,9 @@ using System.Text;
 namespace Sudoku
 {
     /// <summary>
-    /// Holds a sudoku puzzle
+    /// Holds a sudoku puzzle with all the solution information
     /// </summary>
-    public class Table
+    internal class Table : IPrintSource
     {
         // The values themselves
         private readonly Cell[] values = new Cell[Position.BOARD_SIZE];
@@ -39,31 +39,20 @@ namespace Sudoku
 
         }
 
-        // Print the table
-        public string Print(EPrintStyle style)
+        // Clone from another table
+        public void Clone(Table src)
         {
-            string str = "";
-
-            foreach(var pos in Position.AllPositions)
+            for (int i = 0; i < values.Length; i++)
             {
-                str += style == EPrintStyle.READABLE ? " " : "";
-                str += this[pos].Value == 0 ? "." : this[pos].Value.ToString();
-
-                if (pos.Column == Position.ROW_COL_SEC_SIZE - 1)
-                {
-                    str += style == EPrintStyle.READABLE || style == EPrintStyle.COMPACT ? Environment.NewLine : "";
-
-                    if (pos.Row % Position.GRID_SIZE == Position.GRID_SIZE - 1 && style == EPrintStyle.READABLE)
-                    str += "------|-----|-----" + Environment.NewLine;
-                }
+                values[i].Clone(src.values[i]);
             }
-
-            str += style == EPrintStyle.CSV ? "," : "";
-            str += Environment.NewLine;
-
-            return str;
         }
 
+        // IPrintSource interface
+        public uint GetCellValue(uint cellPosition)
+        {
+            return values[cellPosition].Value;
+        }
     }
 
 }

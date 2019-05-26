@@ -34,7 +34,7 @@ namespace Sudoku
         RANDOM
     }
 
-    public enum EMarkType
+    internal enum EMarkType
     {
         [EnumDescription("Given number")]
         GIVEN,
@@ -95,4 +95,9 @@ namespace Sudoku
         READABLE,
         CSV
     };
+
+    public interface IPrintSource
+    {
+        uint GetCellValue(uint cellPosition);
+    }
 }

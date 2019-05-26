@@ -5,63 +5,85 @@ namespace Sudoku
 {
     public class Solver
     {
-        protected Table solution = new Table();
+        private Table solution = new Table();
         private List<LogEntry> logEntries = new List<LogEntry>();
         protected Random random = new Random();
+        public bool Verbose { get; set; }
+        public bool TrackTiming { get; set; }
+        protected bool LogDecisions;
 
         #region Solver
 
-        //
-        // Set the puzzle
-        //
-        public bool SetPuzzle(Table puzzle)
+        /// <summary>
+        /// Entry point to solve a sudoku puzzle
+        /// </summary>
+        /// <returns>statistics if solved, null otherwise</returns>
+        internal Puzzle Solve(Puzzle puzzle, bool withoutGuesses)
         {
             uint round = 1;
 
+            // Reset our internal state
             Reset();
 
+            // Copy the puzzle into "solution"
             foreach (var pos in Position.AllPositions)
             {
-                if (puzzle[pos].IsMarked)
+                uint val = puzzle.Cells[pos.Cell];
+                if (val != 0)
                 {
-                    var val = puzzle[pos].Value;
-
                     if (!solution[pos].IsPossible(val))
                     {
-                        return false;
+                        // Impossible puzzle right off the start
+                        return null;
                     }
 
                     Mark(pos, val, round, EMarkType.GIVEN);
                 }
             }
 
-            return true;
-        }
-
-        /// <summary>
-        /// Entry point to solve a sudoku puzzle
-        /// </summary>
-        /// <returns>statistics if solved, null otherwise</returns>
-        public Statistics Solve()
-        {
-            if (Solve(2))
+            // Now Solve the puzzle
+            if (!Solve(2, withoutGuesses))
             {
-                return new Statistics(logEntries);
+                // Imppossible puzzle
+                return null;
             }
 
-            return null;
+            // Make a new puzzle from the solution
+            var statistics = LogDecisions ? new Statistics(logEntries) : null;
+            var solvedPuzzle = new Puzzle(solution, statistics);
+
+            return solvedPuzzle;
         }
 
         //
         // Recursively solve a puzzle
         //
-        private bool Solve(uint round)
+        private bool Solve(uint round, bool withoutGuesses)
         {
             // Exhaust all deductions
             while (SingleSolveMove(round))
             {
-                if (solution.IsSolved) return true;
-                if (IsImpossible) return false;
+                if (solution.IsSolved)
+                {
+                    // Puzzle is solved
+                    return true;
+                }
+
+                if (IsImpossible)
+                {
+                    // If we are hollowing out a puzzle that we know is possible, we have a bug
+                    if (withoutGuesses)
+                    {
+                        throw new InvalidOperationException("Known possible puzzle found impossible");
+                    }
+                    return false;
+                }
+            }
+
+            // We can't solve without guessing
+            if (withoutGuesses)
+            {
+                return false;
             }
 
             // Get all guesses
@@ -87,7 +109,7 @@ namespace Sudoku
                 }
 
                 // Solve recursively
-                if (Solve(nextRound))
+                if (Solve(nextRound, withoutGuesses))
                 {
                     return true;
                 }
@@ -165,8 +187,11 @@ namespace Sudoku
                 {
                     if (!solution[pos].IsMarked && solution[pos].CountPossibilities() == 0)
                     {
-                        Console.WriteLine("Impossible at pos " + pos.ToString());
-                        Console.Write(solution.Print(EPrintStyle.READABLE));
+                        if (Verbose)
+                        {
+                            Console.WriteLine("Impossible at pos " + pos.ToString());
+                            Console.Write(Print(solution, EPrintStyle.READABLE));
+                        }
                         return true;
                     }
                 }
@@ -183,12 +208,6 @@ namespace Sudoku
             {
                 solution[pos].Unmark(round);
             }
-
-            // ZZZZ
-            //while (solveInstructions->size() > 0 && solveInstructions->back()->getRound() == round)
-            //{
-            //    solveInstructions->pop_back();
-            //}
         }
 
         private bool SingleSolveMove(uint round)
@@ -398,7 +417,7 @@ namespace Sudoku
             {
                 if (solution[position1].IsPossible(cv))
                 {
-                    doneSomething |= solution[position2].SetImpossible(cv, round);
+                    doneSomething |= RemovePossiblity(position2, cv, round);
                 }
             }
 
@@ -452,7 +471,7 @@ namespace Sudoku
                         {
                             if (rowPos.Section != sectionPos.Section)
                             {
-                                doneSomething |= solution[rowPos].SetImpossible(cellValue, round);
+                                doneSomething |= RemovePossiblity(rowPos, cellValue, round);
                             }
                         }
 
@@ -515,7 +534,7 @@ namespace Sudoku
                         {
                             if (columnPos.Section != sectionPos.Section)
                             {
-                                doneSomething |= solution[columnPos].SetImpossible(cellValue, round);
+                                doneSomething |= RemovePossiblity(columnPos, cellValue, round);
                             }
                         }
 
@@ -577,7 +596,7 @@ namespace Sudoku
                         {
                             if (rowPosition.Row != sectionPos.Row)
                             {
-                                doneSomething |= solution[sectionPos].SetImpossible(cellValue, round);
+                                doneSomething |= RemovePossiblity(sectionPos, cellValue, round);
                             }
                         }
 
@@ -640,7 +659,7 @@ namespace Sudoku
                         {
                             if (columnPosition.Column != sectionPos.Column)
                             {
-                                doneSomething |= solution[sectionPos].SetImpossible(cellValue, round);
+                                doneSomething |= RemovePossiblity(sectionPos, cellValue, round);
                             }
                         }
 
@@ -741,8 +760,8 @@ namespace Sudoku
                                     {
                                         if (cellValue3 != cellValue1 && cellValue3 != cellValue2)
                                         {
-                                            doneSomething |= solution[pos1_1].SetImpossible(cellValue3, round);
-                                            doneSomething |= solution[pos1_2].SetImpossible(cellValue3, round);
+                                            doneSomething |= RemovePossiblity(pos1_1, cellValue3, round);
+                                            doneSomething |= RemovePossiblity(pos1_2, cellValue3, round);
                                         }
                                     }
 
@@ -845,8 +864,8 @@ namespace Sudoku
                                     {
                                         if (cellValue3 != cellValue1 && cellValue3 != cellValue2)
                                         {
-                                            doneSomething |= solution[pos1_1].SetImpossible(cellValue3, round);
-                                            doneSomething |= solution[pos1_2].SetImpossible(cellValue3, round);
+                                            doneSomething |= RemovePossiblity(pos1_1, cellValue3, round);
+                                            doneSomething |= RemovePossiblity(pos1_2, cellValue3, round);
                                         }
                                     }
 
@@ -949,8 +968,8 @@ namespace Sudoku
                                     {
                                         if (cellValue3 != cellValue1 && cellValue3 != cellValue2)
                                         {
-                                            doneSomething |= solution[pos1_1].SetImpossible(cellValue3, round);
-                                            doneSomething |= solution[pos1_2].SetImpossible(cellValue3, round);
+                                            doneSomething |= RemovePossiblity(pos1_1, cellValue3, round);
+                                            doneSomething |= RemovePossiblity(pos1_2, cellValue3, round);
                                         }
                                     }
 
@@ -1011,10 +1030,35 @@ namespace Sudoku
 
         private void Log(uint round, EMarkType type, Position position = null, uint value = uint.MaxValue)
         {
-            // if (logHistory || recordHistory) addHistoryItem(new LogItem(round, LogItem::SINGLE, lastValue, position));
-            var logEntry = new LogEntry(round, type, position, value);
-            Console.WriteLine(logEntry);
-            logEntries.Add(logEntry);
+            if (LogDecisions || Verbose)
+            {
+                var logEntry = new LogEntry(round, type, position, value);
+
+                if (LogDecisions)
+                {
+                    logEntries.Add(logEntry);
+                }
+
+                if (Verbose)
+                {
+                    Console.WriteLine(logEntry);
+                }
+            }
+        }
+
+        private bool RemovePossiblity(Position position, uint value, uint round)
+        {
+            if (solution[position].SetImpossible(value, round))
+            {
+                if (Verbose)
+                {
+                    Console.WriteLine($"Round {round}: Set value {value} impossible for {position}");
+                }
+
+                return true;
+            }
+
+            return false;
         }
 
         //
@@ -1038,6 +1082,34 @@ namespace Sudoku
                 list[i] = value;
             }
         }
+
+        // Print a puzzle
+        protected string Print(IPrintSource source, EPrintStyle style)
+        {
+            string str = "";
+
+            foreach (var pos in Position.AllPositions)
+            {
+                uint val = source.GetCellValue(pos.Cell);
+
+                str += style == EPrintStyle.READABLE ? " " : "";
+                str += val == 0 ? "." : val.ToString();
+
+                if (pos.Column == Position.ROW_COL_SEC_SIZE - 1)
+                {
+                    str += style == EPrintStyle.READABLE || style == EPrintStyle.COMPACT ? Environment.NewLine : "";
+
+                    if (pos.Row % Position.GRID_SIZE == Position.GRID_SIZE - 1 && style == EPrintStyle.READABLE)
+                        str += "------|-----|-----" + Environment.NewLine;
+                }
+            }
+
+            str += style == EPrintStyle.CSV ? "," : "";
+            str += Environment.NewLine;
+
+            return str;
+        }
+
 
         #endregion
 
