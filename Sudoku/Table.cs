@@ -8,7 +8,7 @@ namespace Sudoku
     /// <summary>
     /// Holds a sudoku puzzle with all the solution information
     /// </summary>
-    internal class Table : IPrintSource
+    public class Table : IPrintSource
     {
         // The values themselves
         private readonly Cell[] values = new Cell[Position.BOARD_SIZE];

@@ -12,9 +12,49 @@
     </Window.InputBindings>
     <Window.Resources>
         <ResourceDictionary>
-            <Style TargetType="Button">
+
+            <!-- Button style for commands -->
+            <Style x:Key="CommandButton" TargetType="Button">
                 <Setter Property="Margin" Value="0, 20, 0, 0" />
             </Style>
+
+            <!-- Button style for number picker -->
+            <Style x:Key="NumberButton" TargetType="Button">
+                <Setter Property="Background" Value="White" />
+                <Setter Property="FontSize" Value="22"/>
+            </Style>
+
+            <!-- Number picker context menu -->
+            <ContextMenu x:Key="numberPickerContextMenu" Width="150" Height="170">
+                <ContextMenu.Template>
+                    <ControlTemplate>
+                        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Button Style="{StaticResource NumberButton}" Content="1" Click="ClickNumber"/>
+                            <Button Style="{StaticResource NumberButton}" Content="2" Click="ClickNumber" Grid.Column="1"/>
+                            <Button Style="{StaticResource NumberButton}" Content="3" Click="ClickNumber" Grid.Column="2"/>
+                            <Button Style="{StaticResource NumberButton}" Content="4" Click="ClickNumber" Grid.Column="0" Grid.Row="1"/>
+                            <Button Style="{StaticResource NumberButton}" Content="5" Click="ClickNumber" Grid.Column="1" Grid.Row="1"/>
+                            <Button Style="{StaticResource NumberButton}" Content="6" Click="ClickNumber" Grid.Column="2" Grid.Row="1"/>
+                            <Button Style="{StaticResource NumberButton}" Content="7" Click="ClickNumber" Grid.Column="0" Grid.Row="2"/>
+                            <Button Style="{StaticResource NumberButton}" Content="8" Click="ClickNumber" Grid.Column="1" Grid.Row="2"/>
+                            <Button Style="{StaticResource NumberButton}" Content="9" Click="ClickNumber" Grid.Column="2" Grid.Row="2"/>
+                            <Button Style="{StaticResource NumberButton}" Content="Clear" Click="ClickClear" Grid.Row="3" Grid.ColumnSpan="3"/>
+                        </Grid>
+                    </ControlTemplate>
+                </ContextMenu.Template>
+            </ContextMenu>
+
         </ResourceDictionary>
     </Window.Resources>
     <DockPanel>
@@ -28,14 +68,19 @@
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <Button Grid.Row="1" Content="Pause" Command="{Binding Pause}"/>
-            <Button Grid.Row="2" Content="Clear" Command="{Binding Clear}"/>
-            <Button Grid.Row="3" Content="New easy" Command="{Binding NewEasy}"/>
-            <Button Grid.Row="4" Content="New medium" Command="{Binding NewMedium}"/>
-            <Button Grid.Row="5" Content="New hard" Command="{Binding NewHard}"/>
-            <Button Grid.Row="6" Content="New very hard" Command="{Binding NewVeryHard}"/>
+            <Button Style="{StaticResource CommandButton}" Grid.Row="1" Content="Pause" Command="{Binding Pause}"/>
+            <Button Style="{StaticResource CommandButton}" Grid.Row="2" Content="Clear" Command="{Binding Clear}"/>
+            <Button Style="{StaticResource CommandButton}" Grid.Row="3" Content="New easy" Command="{Binding NewEasy}"/>
+            <Button Style="{StaticResource CommandButton}" Grid.Row="4" Content="New medium" Command="{Binding NewMedium}"/>
+            <Button Style="{StaticResource CommandButton}" Grid.Row="5" Content="New hard" Command="{Binding NewHard}"/>
+            <Button Style="{StaticResource CommandButton}" Grid.Row="6" Content="New very hard" Command="{Binding NewVeryHard}"/>
         </Grid>
         <Grid x:Name="board" DataContext="{Binding BoardLogic}" Margin="20">
+            <Grid.Resources>
+                <ResourceDictionary>
+
+                </ResourceDictionary>
+            </Grid.Resources>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
@@ -60,266 +105,105 @@
             </Grid.RowDefinitions>
             
             <!-- Row 0 -->
-            <Border Grid.Column="0" Grid.Row="0"  Background="{Binding Background[0]}">
-                <TextBlock Text="{Binding Cells[0]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="1" Grid.Row="0"  Background="{Binding Background[1]}">
-                <TextBlock Text="{Binding Cells[1]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="2" Grid.Row="0"  Background="{Binding Background[2]}">
-                <TextBlock Text="{Binding Cells[2]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="3" Grid.Row="0"  Background="{Binding Background[3]}">
-                <TextBlock Text="{Binding Cells[3]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="4" Grid.Row="0"  Background="{Binding Background[4]}">
-                <TextBlock Text="{Binding Cells[4]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="5" Grid.Row="0"  Background="{Binding Background[5]}">
-                <TextBlock Text="{Binding Cells[5]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="6" Grid.Row="0"  Background="{Binding Background[6]}">
-                <TextBlock Text="{Binding Cells[6]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="7" Grid.Row="0"  Background="{Binding Background[7]}">
-                <TextBlock Text="{Binding Cells[7]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="8" Grid.Row="0"  Background="{Binding Background[8]}">
-                <TextBlock Text="{Binding Cells[8]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
+            <local:UICell DataContext="{Binding UICells[0]}" Grid.Row="0" Grid.Column="0"/>
+            <local:UICell DataContext="{Binding UICells[1]}" Grid.Row="0" Grid.Column="1"/>
+            <local:UICell DataContext="{Binding UICells[2]}" Grid.Row="0" Grid.Column="2"/>
+            <local:UICell DataContext="{Binding UICells[3]}" Grid.Row="0" Grid.Column="3"/>
+            <local:UICell DataContext="{Binding UICells[4]}" Grid.Row="0" Grid.Column="4"/>
+            <local:UICell DataContext="{Binding UICells[5]}" Grid.Row="0" Grid.Column="5"/>
+            <local:UICell DataContext="{Binding UICells[6]}" Grid.Row="0" Grid.Column="6"/>
+            <local:UICell DataContext="{Binding UICells[7]}" Grid.Row="0" Grid.Column="7"/>
+            <local:UICell DataContext="{Binding UICells[8]}" Grid.Row="0" Grid.Column="8"/>
 
-            <!-- Row 1 --> 
-            <Border Grid.Column="0" Grid.Row="1"  Background="{Binding Background[9]}">
-                <TextBlock Text="{Binding Cells[9]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="1" Grid.Row="1"  Background="{Binding Background[10]}">
-                <TextBlock Text="{Binding Cells[10]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="2" Grid.Row="1"  Background="{Binding Background[11]}">
-                <TextBlock Text="{Binding Cells[11]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="3" Grid.Row="1"  Background="{Binding Background[12]}">
-                <TextBlock Text="{Binding Cells[12]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="4" Grid.Row="1"  Background="{Binding Background[13]}">
-                <TextBlock Text="{Binding Cells[13]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="5" Grid.Row="1"  Background="{Binding Background[14]}">
-                <TextBlock Text="{Binding Cells[14]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="6" Grid.Row="1"  Background="{Binding Background[15]}">
-                <TextBlock Text="{Binding Cells[15]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="7" Grid.Row="1"  Background="{Binding Background[16]}">
-                <TextBlock Text="{Binding Cells[16]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="8" Grid.Row="1"  Background="{Binding Background[17]}">
-                <TextBlock Text="{Binding Cells[17]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
+            <!-- Row 1 -->
+            <local:UICell DataContext="{Binding UICells[9]}" Grid.Row="1" Grid.Column="0"/>
+            <local:UICell DataContext="{Binding UICells[10]}" Grid.Row="1" Grid.Column="1"/>
+            <local:UICell DataContext="{Binding UICells[11]}" Grid.Row="1" Grid.Column="2"/>
+            <local:UICell DataContext="{Binding UICells[12]}" Grid.Row="1" Grid.Column="3"/>
+            <local:UICell DataContext="{Binding UICells[13]}" Grid.Row="1" Grid.Column="4"/>
+            <local:UICell DataContext="{Binding UICells[14]}" Grid.Row="1" Grid.Column="5"/>
+            <local:UICell DataContext="{Binding UICells[15]}" Grid.Row="1" Grid.Column="6"/>
+            <local:UICell DataContext="{Binding UICells[16]}" Grid.Row="1" Grid.Column="7"/>
+            <local:UICell DataContext="{Binding UICells[17]}" Grid.Row="1" Grid.Column="8"/>
 
             <!-- Row 2 -->
-            <Border Grid.Column="0" Grid.Row="2"  Background="{Binding Background[18]}">
-                <TextBlock Text="{Binding Cells[18]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="1" Grid.Row="2"  Background="{Binding Background[19]}">
-                <TextBlock Text="{Binding Cells[19]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="2" Grid.Row="2"  Background="{Binding Background[20]}">
-                <TextBlock Text="{Binding Cells[20]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="3" Grid.Row="2"  Background="{Binding Background[21]}">
-                <TextBlock Text="{Binding Cells[21]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="4" Grid.Row="2"  Background="{Binding Background[22]}">
-                <TextBlock Text="{Binding Cells[22]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="5" Grid.Row="2"  Background="{Binding Background[23]}">
-                <TextBlock Text="{Binding Cells[23]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="6" Grid.Row="2"  Background="{Binding Background[24]}">
-                <TextBlock Text="{Binding Cells[24]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="7" Grid.Row="2"  Background="{Binding Background[25]}">
-                <TextBlock Text="{Binding Cells[25]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="8" Grid.Row="2"  Background="{Binding Background[26]}">
-                <TextBlock Text="{Binding Cells[26]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
+            <local:UICell DataContext="{Binding UICells[18]}" Grid.Row="2" Grid.Column="0"/>
+            <local:UICell DataContext="{Binding UICells[19]}" Grid.Row="2" Grid.Column="1"/>
+            <local:UICell DataContext="{Binding UICells[20]}" Grid.Row="2" Grid.Column="2"/>
+            <local:UICell DataContext="{Binding UICells[21]}" Grid.Row="2" Grid.Column="3"/>
+            <local:UICell DataContext="{Binding UICells[22]}" Grid.Row="2" Grid.Column="4"/>
+            <local:UICell DataContext="{Binding UICells[23]}" Grid.Row="2" Grid.Column="5"/>
+            <local:UICell DataContext="{Binding UICells[24]}" Grid.Row="2" Grid.Column="6"/>
+            <local:UICell DataContext="{Binding UICells[25]}" Grid.Row="2" Grid.Column="7"/>
+            <local:UICell DataContext="{Binding UICells[26]}" Grid.Row="2" Grid.Column="8"/>
 
             <!-- Row 3 -->
-            <Border Grid.Column="0" Grid.Row="3"  Background="{Binding Background[27]}">
-                <TextBlock Text="{Binding Cells[27]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="1" Grid.Row="3"  Background="{Binding Background[28]}">
-                <TextBlock Text="{Binding Cells[28]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="2" Grid.Row="3"  Background="{Binding Background[29]}">
-                <TextBlock Text="{Binding Cells[29]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="3" Grid.Row="3"  Background="{Binding Background[30]}">
-                <TextBlock Text="{Binding Cells[30]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="4" Grid.Row="3"  Background="{Binding Background[31]}">
-                <TextBlock Text="{Binding Cells[31]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="5" Grid.Row="3"  Background="{Binding Background[32]}">
-                <TextBlock Text="{Binding Cells[32]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="6" Grid.Row="3"  Background="{Binding Background[33]}">
-                <TextBlock Text="{Binding Cells[33]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="7" Grid.Row="3"  Background="{Binding Background[34]}">
-                <TextBlock Text="{Binding Cells[34]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="8" Grid.Row="3"  Background="{Binding Background[35]}">
-                <TextBlock Text="{Binding Cells[35]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
+            <local:UICell DataContext="{Binding UICells[27]}" Grid.Row="3" Grid.Column="0"/>
+            <local:UICell DataContext="{Binding UICells[28]}" Grid.Row="3" Grid.Column="1"/>
+            <local:UICell DataContext="{Binding UICells[29]}" Grid.Row="3" Grid.Column="2"/>
+            <local:UICell DataContext="{Binding UICells[30]}" Grid.Row="3" Grid.Column="3"/>
+            <local:UICell DataContext="{Binding UICells[31]}" Grid.Row="3" Grid.Column="4"/>
+            <local:UICell DataContext="{Binding UICells[32]}" Grid.Row="3" Grid.Column="5"/>
+            <local:UICell DataContext="{Binding UICells[33]}" Grid.Row="3" Grid.Column="6"/>
+            <local:UICell DataContext="{Binding UICells[34]}" Grid.Row="3" Grid.Column="7"/>
+            <local:UICell DataContext="{Binding UICells[35]}" Grid.Row="3" Grid.Column="8"/>
 
             <!-- Row 4 -->
-            <Border Grid.Column="0" Grid.Row="4"  Background="{Binding Background[36]}">
-                <TextBlock Text="{Binding Cells[36]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="1" Grid.Row="4"  Background="{Binding Background[37]}">
-                <TextBlock Text="{Binding Cells[37]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="2" Grid.Row="4"  Background="{Binding Background[38]}">
-                <TextBlock Text="{Binding Cells[38]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="3" Grid.Row="4"  Background="{Binding Background[39]}">
-                <TextBlock Text="{Binding Cells[39]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="4" Grid.Row="4"  Background="{Binding Background[40]}">
-                <TextBlock Text="{Binding Cells[40]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="5" Grid.Row="4"  Background="{Binding Background[41]}">
-                <TextBlock Text="{Binding Cells[41]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="6" Grid.Row="4"  Background="{Binding Background[42]}">
-                <TextBlock Text="{Binding Cells[42]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="7" Grid.Row="4"  Background="{Binding Background[43]}">
-                <TextBlock Text="{Binding Cells[43]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="8" Grid.Row="4"  Background="{Binding Background[44]}">
-                <TextBlock Text="{Binding Cells[44]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
+            <local:UICell DataContext="{Binding UICells[36]}" Grid.Row="4" Grid.Column="0"/>
+            <local:UICell DataContext="{Binding UICells[37]}" Grid.Row="4" Grid.Column="1"/>
+            <local:UICell DataContext="{Binding UICells[38]}" Grid.Row="4" Grid.Column="2"/>
+            <local:UICell DataContext="{Binding UICells[39]}" Grid.Row="4" Grid.Column="3"/>
+            <local:UICell DataContext="{Binding UICells[40]}" Grid.Row="4" Grid.Column="4"/>
+            <local:UICell DataContext="{Binding UICells[41]}" Grid.Row="4" Grid.Column="5"/>
+            <local:UICell DataContext="{Binding UICells[42]}" Grid.Row="4" Grid.Column="6"/>
+            <local:UICell DataContext="{Binding UICells[43]}" Grid.Row="4" Grid.Column="7"/>
+            <local:UICell DataContext="{Binding UICells[44]}" Grid.Row="4" Grid.Column="8"/>
 
             <!-- Row 5 -->
-            <Border Grid.Column="0" Grid.Row="5"  Background="{Binding Background[45]}">
-                <TextBlock Text="{Binding Cells[45]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="1" Grid.Row="5"  Background="{Binding Background[46]}">
-                <TextBlock Text="{Binding Cells[46]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="2" Grid.Row="5"  Background="{Binding Background[47]}">
-                <TextBlock Text="{Binding Cells[47]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="3" Grid.Row="5"  Background="{Binding Background[48]}">
-                <TextBlock Text="{Binding Cells[48]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="4" Grid.Row="5"  Background="{Binding Background[49]}">
-                <TextBlock Text="{Binding Cells[49]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="5" Grid.Row="5"  Background="{Binding Background[50]}">
-                <TextBlock Text="{Binding Cells[50]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="6" Grid.Row="5"  Background="{Binding Background[51]}">
-                <TextBlock Text="{Binding Cells[51]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="7" Grid.Row="5"  Background="{Binding Background[52]}">
-                <TextBlock Text="{Binding Cells[52]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="8" Grid.Row="5"  Background="{Binding Background[53]}">
-                <TextBlock Text="{Binding Cells[53]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
+            <local:UICell DataContext="{Binding UICells[45]}" Grid.Row="5" Grid.Column="0"/>
+            <local:UICell DataContext="{Binding UICells[46]}" Grid.Row="5" Grid.Column="1"/>
+            <local:UICell DataContext="{Binding UICells[47]}" Grid.Row="5" Grid.Column="2"/>
+            <local:UICell DataContext="{Binding UICells[48]}" Grid.Row="5" Grid.Column="3"/>
+            <local:UICell DataContext="{Binding UICells[49]}" Grid.Row="5" Grid.Column="4"/>
+            <local:UICell DataContext="{Binding UICells[50]}" Grid.Row="5" Grid.Column="5"/>
+            <local:UICell DataContext="{Binding UICells[51]}" Grid.Row="5" Grid.Column="6"/>
+            <local:UICell DataContext="{Binding UICells[52]}" Grid.Row="5" Grid.Column="7"/>
+            <local:UICell DataContext="{Binding UICells[53]}" Grid.Row="5" Grid.Column="8"/>
 
             <!-- Row 6 -->
-            <Border Grid.Column="0" Grid.Row="6"  Background="{Binding Background[54]}">
-                <TextBlock Text="{Binding Cells[54]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="1" Grid.Row="6"  Background="{Binding Background[55]}">
-                <TextBlock Text="{Binding Cells[55]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="2" Grid.Row="6"  Background="{Binding Background[56]}">
-                <TextBlock Text="{Binding Cells[56]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="3" Grid.Row="6"  Background="{Binding Background[57]}">
-                <TextBlock Text="{Binding Cells[57]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="4" Grid.Row="6"  Background="{Binding Background[58]}">
-                <TextBlock Text="{Binding Cells[58]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="5" Grid.Row="6"  Background="{Binding Background[59]}">
-                <TextBlock Text="{Binding Cells[59]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="6" Grid.Row="6"  Background="{Binding Background[60]}">
-                <TextBlock Text="{Binding Cells[60]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="7" Grid.Row="6"  Background="{Binding Background[61]}">
-                <TextBlock Text="{Binding Cells[61]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="8" Grid.Row="6"  Background="{Binding Background[62]}">
-                <TextBlock Text="{Binding Cells[62]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
+            <local:UICell DataContext="{Binding UICells[54]}" Grid.Row="6" Grid.Column="0"/>
+            <local:UICell DataContext="{Binding UICells[55]}" Grid.Row="6" Grid.Column="1"/>
+            <local:UICell DataContext="{Binding UICells[56]}" Grid.Row="6" Grid.Column="2"/>
+            <local:UICell DataContext="{Binding UICells[57]}" Grid.Row="6" Grid.Column="3"/>
+            <local:UICell DataContext="{Binding UICells[58]}" Grid.Row="6" Grid.Column="4"/>
+            <local:UICell DataContext="{Binding UICells[59]}" Grid.Row="6" Grid.Column="5"/>
+            <local:UICell DataContext="{Binding UICells[60]}" Grid.Row="6" Grid.Column="6"/>
+            <local:UICell DataContext="{Binding UICells[61]}" Grid.Row="6" Grid.Column="7"/>
+            <local:UICell DataContext="{Binding UICells[62]}" Grid.Row="6" Grid.Column="8"/>
 
             <!-- Row 7 -->
-            <Border Grid.Column="0" Grid.Row="7"  Background="{Binding Background[63]}">
-                <TextBlock Text="{Binding Cells[63]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="1" Grid.Row="7"  Background="{Binding Background[64]}">
-                <TextBlock Text="{Binding Cells[64]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="2" Grid.Row="7"  Background="{Binding Background[65]}">
-                <TextBlock Text="{Binding Cells[65]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="3" Grid.Row="7"  Background="{Binding Background[66]}">
-                <TextBlock Text="{Binding Cells[66]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="4" Grid.Row="7"  Background="{Binding Background[67]}">
-                <TextBlock Text="{Binding Cells[67]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="5" Grid.Row="7"  Background="{Binding Background[68]}">
-                <TextBlock Text="{Binding Cells[68]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="6" Grid.Row="7"  Background="{Binding Background[69]}">
-                <TextBlock Text="{Binding Cells[69]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="7" Grid.Row="7"  Background="{Binding Background[70]}">
-                <TextBlock Text="{Binding Cells[70]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="8" Grid.Row="7"  Background="{Binding Background[71]}">
-                <TextBlock Text="{Binding Cells[71]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
+            <local:UICell DataContext="{Binding UICells[63]}" Grid.Row="7" Grid.Column="0"/>
+            <local:UICell DataContext="{Binding UICells[64]}" Grid.Row="7" Grid.Column="1"/>
+            <local:UICell DataContext="{Binding UICells[65]}" Grid.Row="7" Grid.Column="2"/>
+            <local:UICell DataContext="{Binding UICells[66]}" Grid.Row="7" Grid.Column="3"/>
+            <local:UICell DataContext="{Binding UICells[67]}" Grid.Row="7" Grid.Column="4"/>
+            <local:UICell DataContext="{Binding UICells[68]}" Grid.Row="7" Grid.Column="5"/>
+            <local:UICell DataContext="{Binding UICells[69]}" Grid.Row="7" Grid.Column="6"/>
+            <local:UICell DataContext="{Binding UICells[70]}" Grid.Row="7" Grid.Column="7"/>
+            <local:UICell DataContext="{Binding UICells[71]}" Grid.Row="7" Grid.Column="8"/>
 
             <!-- Row 8 -->
-            <Border Grid.Column="0" Grid.Row="8"  Background="{Binding Background[72]}">
-                <TextBlock Text="{Binding Cells[72]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="1" Grid.Row="8"  Background="{Binding Background[73]}">
-                <TextBlock Text="{Binding Cells[73]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="2" Grid.Row="8"  Background="{Binding Background[74]}">
-                <TextBlock Text="{Binding Cells[74]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="3" Grid.Row="8"  Background="{Binding Background[75]}">
-                <TextBlock Text="{Binding Cells[75]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="4" Grid.Row="8"  Background="{Binding Background[76]}">
-                <TextBlock Text="{Binding Cells[76]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="5" Grid.Row="8"  Background="{Binding Background[77]}">
-                <TextBlock Text="{Binding Cells[77]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="6" Grid.Row="8"  Background="{Binding Background[78]}">
-                <TextBlock Text="{Binding Cells[78]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="7" Grid.Row="8"  Background="{Binding Background[79]}">
-                <TextBlock Text="{Binding Cells[79]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
-            <Border Grid.Column="8" Grid.Row="8"  Background="{Binding Background[80]}">
-                <TextBlock Text="{Binding Cells[80]}" FontSize="33" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-            </Border>
+            <local:UICell DataContext="{Binding UICells[72]}" Grid.Row="8" Grid.Column="0"/>
+            <local:UICell DataContext="{Binding UICells[73]}" Grid.Row="8" Grid.Column="1"/>
+            <local:UICell DataContext="{Binding UICells[74]}" Grid.Row="8" Grid.Column="2"/>
+            <local:UICell DataContext="{Binding UICells[75]}" Grid.Row="8" Grid.Column="3"/>
+            <local:UICell DataContext="{Binding UICells[76]}" Grid.Row="8" Grid.Column="4"/>
+            <local:UICell DataContext="{Binding UICells[77]}" Grid.Row="8" Grid.Column="5"/>
+            <local:UICell DataContext="{Binding UICells[78]}" Grid.Row="8" Grid.Column="6"/>
+            <local:UICell DataContext="{Binding UICells[79]}" Grid.Row="8" Grid.Column="7"/>
+            <local:UICell DataContext="{Binding UICells[80]}" Grid.Row="8" Grid.Column="8"/>
 
+            <!-- Borders -->
             <Rectangle Grid.ColumnSpan="9" Grid.RowSpan="9" Stroke="Black" StrokeThickness="4"/>
             <Rectangle Grid.Row ="2" Grid.ColumnSpan="9" Height="2" Fill="Black" VerticalAlignment="Bottom"/>
             <Rectangle Grid.Row ="5" Grid.ColumnSpan="9" Height="2" Fill="Black" VerticalAlignment="Bottom"/>

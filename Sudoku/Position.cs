@@ -7,7 +7,7 @@ namespace Sudoku
     /// <summary>
     /// Position of cell in a sudoku puzzle - immutable
     /// </summary>
-    internal class Position
+    public class Position
     {
         public const int GRID_SIZE = 3;
         public const int ROW_COL_SEC_SIZE = GRID_SIZE * GRID_SIZE;

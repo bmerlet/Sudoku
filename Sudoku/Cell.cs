@@ -7,7 +7,7 @@ namespace Sudoku
     /// <summary>
     /// Cell of sudoku puzzle
     /// </summary>
-    internal class Cell
+    public class Cell
     {
         // Value of the cell (0-9), 0 means unmarked
         public uint Value { get; private set; }

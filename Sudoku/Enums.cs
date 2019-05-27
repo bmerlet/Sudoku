@@ -34,7 +34,7 @@ namespace Sudoku
         RANDOM
     }
 
-    internal enum EMarkType
+    public enum EMarkType
     {
         [EnumDescription("Given number")]
         GIVEN,

@@ -8,6 +8,8 @@ namespace Sudoku
     public class Creator : Solver
     {
         public const int BOARD_SIZE = Position.BOARD_SIZE;
+        public const int ROW_SIZE = Position.ROW_COL_SEC_SIZE;
+
         public Puzzle GeneratePuzzle(EDifficulty difficulty)
         {
             Puzzle puzzle = null;

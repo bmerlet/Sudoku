@@ -8,6 +8,7 @@ namespace Sudoku
         private Table solution = new Table();
         private List<LogEntry> logEntries = new List<LogEntry>();
         protected Random random = new Random();
+
         public bool Verbose { get; set; }
         public bool TrackTiming { get; set; }
         protected bool LogDecisions;
@@ -19,6 +20,41 @@ namespace Sudoku
         /// </summary>
         /// <returns>statistics if solved, null otherwise</returns>
         internal Puzzle Solve(Puzzle puzzle, bool withoutGuesses)
+        {
+            // Copy the puzzle into "solution"
+            if (!CopyPuzzleToSolution(puzzle))
+            {
+                // Impossible puzzle
+                return null;
+            }
+
+            // Now Solve the puzzle
+            if (!Solve(2, withoutGuesses))
+            {
+                // Imppossible puzzle
+                return null;
+            }
+
+            // Make a new puzzle from the solution
+            var statistics = LogDecisions ? new Statistics(logEntries) : null;
+            var solvedPuzzle = new Puzzle(solution, statistics);
+
+            return solvedPuzzle;
+        }
+
+        public Table Evaluate(Puzzle puzzle)
+        {
+            // Copy the puzzle into "solution"
+            if (!CopyPuzzleToSolution(puzzle))
+            {
+                // Impossible puzzle
+                return null;
+            }
+
+            return solution;
+        }
+
+        private bool CopyPuzzleToSolution(Puzzle puzzle)
         {
             uint round = 1;
 
@@ -34,25 +70,14 @@ namespace Sudoku
                     if (!solution[pos].IsPossible(val))
                     {
                         // Impossible puzzle right off the start
-                        return null;
+                        return false;
                     }
 
                     Mark(pos, val, round, EMarkType.GIVEN);
                 }
             }
 
-            // Now Solve the puzzle
-            if (!Solve(2, withoutGuesses))
-            {
-                // Imppossible puzzle
-                return null;
-            }
-
-            // Make a new puzzle from the solution
-            var statistics = LogDecisions ? new Statistics(logEntries) : null;
-            var solvedPuzzle = new Puzzle(solution, statistics);
-
-            return solvedPuzzle;
+            return true;
         }
 
         //
