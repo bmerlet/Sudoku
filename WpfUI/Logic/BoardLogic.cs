@@ -99,8 +99,8 @@ namespace WpfUI.Logic
             {
                 uint val = puzzle.Cells[i];
                 UICells[i].SetNumber(val);
-                UICells[i].UpdateGiven(val != 0);
-                UICells[i].UpdateSelected(false);
+                UICells[i].SetGiven(val != 0);
+                UICells[i].SetSelected(false);
                 UICells[i].ResetPossibles();
             }
 
@@ -197,55 +197,51 @@ namespace WpfUI.Logic
         //
         public bool OnSetNumber(uint number)
         {
+            bool keepContextMenuOpen = false;
+
             if (puzzle != null && selectedCell != uint.MaxValue)
             {
                 var cell = UICells[selectedCell];
+                uint position = selectedCell;
+                uint oldNumber = cell.Number == "" ? 0 : uint.Parse(cell.Number);
+                uint oldPossibles = cell.GetPossiblesAsBitList();
+                uint newNumber;
+                uint newPossibles;
 
                 if (pickPossibilities)
                 {
-                    uint oldValue = number;
-                    if (number == 0)
-                    {
-                        // Special case fir undo when clearing possibles
-                        // We need to remember what possibles were there
-                        oldValue = 0xf;
-                        foreach(var cv in Cell.AllValidCellValues)
-                        {
-                            if (cell.IsListedAsPossible(cv))
-                            {
-                                oldValue |= (uint)(1 << ((int)cv + 4));
-                            }
-                        }
-                    }
-
+                    // update possibles
                     SetPossible(selectedCell, number);
 
-                    // Log the change
-                    LogAction(LogEntry.EType.PickPossibles, selectedCell, oldValue, number);
+                    // For undo/redo
+                    newNumber = oldNumber;
+                    newPossibles = cell.GetPossiblesAsBitList();
 
                     // Keep the context menu open
-                    return true;
+                    keepContextMenuOpen = true;
                 }
                 else
                 {
-                    uint oldValue = cell.Number == "" ? 0 : uint.Parse(cell.Number);
-
                     // Set the number in the cell, and evaluate
                     SetNumber(selectedCell, number);
 
-                    // Log the change
-                    LogAction(LogEntry.EType.PickNumber, selectedCell, oldValue, number);
+                    // For undo/redo
+                    newNumber = number;
+                    newPossibles = cell.GetPossiblesAsBitList();
 
                     // Unselect the cell
-                    cell.UpdateSelected(false);
+                    cell.SetSelected(false);
                     selectedCell = uint.MaxValue;
 
                     // close context menu
-                    return false;
+                    keepContextMenuOpen = false;
                 }
+
+                // Log the change
+                LogAction(position, oldNumber, newNumber, oldPossibles, newPossibles);
             }
 
-            return false;
+            return keepContextMenuOpen;
         }
 
         //
@@ -261,28 +257,9 @@ namespace WpfUI.Logic
                     Undo.SetCanExecute(false);
                 }
 
-                if (entryToUndo.Type == LogEntry.EType.PickNumber)
-                {
-                    SetNumber(entryToUndo.Position, entryToUndo.OldValue);
-                }
-                else
-                {
-                    if (entryToUndo.OldValue > 0xf)
-                    {
-                        // Special case of undoing the clearing of possibles
-                        foreach (var cv in Cell.AllValidCellValues)
-                        {
-                            if ((entryToUndo.OldValue & (uint)(1 << ((int)cv + 4))) != 0)
-                            {
-                                SetPossible(entryToUndo.Position, cv);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        SetPossible(entryToUndo.Position, entryToUndo.OldValue);
-                    }
-                }
+                SetNumber(entryToUndo.Position, entryToUndo.OldNumber);
+                UICells[entryToUndo.Position].SetPossiblesAsBitList(entryToUndo.OldPossibles);
+                UpdateAllPossibleStatus();
 
                 Redo.SetCanExecute(true);
             }
@@ -301,22 +278,17 @@ namespace WpfUI.Logic
                     Redo.SetCanExecute(false);
                 }
 
-                if (entryToRedo.Type == LogEntry.EType.PickNumber)
-                {
-                    SetNumber(entryToRedo.Position, entryToRedo.NewValue);
-                }
-                else
-                {
-                    SetPossible(entryToRedo.Position, entryToRedo.NewValue);
-                }
+                SetNumber(entryToRedo.Position, entryToRedo.NewNumber);
+                UICells[entryToRedo.Position].SetPossiblesAsBitList(entryToRedo.NewPossibles);
+                UpdateAllPossibleStatus();
 
                 Undo.SetCanExecute(true);
             }
         }
 
-        private void LogAction(LogEntry.EType type, uint position, uint oldValue, uint newValue)
+        private void LogAction(uint position, uint oldNumber, uint newNumber, uint oldPossibles, uint newPossibles)
         {
-            var entry = new LogEntry(type, position, oldValue, newValue);
+            var entry = new LogEntry(position, oldNumber, newNumber, oldPossibles, newPossibles);
             if (logIndex < logEntries.Count)
             {
                 logEntries[logIndex] = entry;
@@ -349,11 +321,11 @@ namespace WpfUI.Logic
             if (userTable == null)
             {
                 // User selection makes puzzle impossible!
-                cell.UpdateNumberStatus(true);
+                cell.SetNumberStatus(true);
             }
             else
             {
-                cell.UpdateNumberStatus(false);
+                cell.SetNumberStatus(false);
                 if (userTable.IsSolved)
                 {
                     // Finished
@@ -377,12 +349,12 @@ namespace WpfUI.Logic
             // Add/remove the number (except if it is 0)
             if (number != 0)
             {
-                cell.UpdatePossibles(number);
+                cell.SetPossibles(number);
 
                 // If we have a table, check if this number is possible
                 if (userTable != null)
                 {
-                    UpdateOnePossibleStatus(Position.GetCellFromCell(selectedCell));
+                    UpdateOnePossibleStatus(Position.GetCellFromCell(position));
                 }
             }
             else
@@ -393,30 +365,36 @@ namespace WpfUI.Logic
 
         private void UpdateAllPossibleStatus()
         {
-            foreach(var pos in Position.AllPositions)
+            if (userTable != null)
             {
-                UpdateOnePossibleStatus(pos);
+                foreach (var pos in Position.AllPositions)
+                {
+                    UpdateOnePossibleStatus(pos);
+                }
             }
         }
 
         private void UpdateOnePossibleStatus(Position pos)
         {
-            bool error = false;
-
-            var tableCell = userTable[pos];
-            foreach (var cellValue in Cell.AllValidCellValues)
+            if (userTable != null)
             {
-                if (UICells[pos.Cell].IsListedAsPossible(cellValue))
+                bool error = false;
+
+                var tableCell = userTable[pos];
+                foreach (var cellValue in Cell.AllValidCellValues)
                 {
-                    if (!tableCell.IsPossible(cellValue))
+                    if (UICells[pos.Cell].IsListedAsPossible(cellValue))
                     {
-                        error = true;
-                        break;
+                        if (!tableCell.IsPossible(cellValue))
+                        {
+                            error = true;
+                            break;
+                        }
                     }
                 }
-            }
 
-            UICells[pos.Cell].UpdatePossiblesStatus(error);
+                UICells[pos.Cell].UpdatePossiblesStatus(error);
+            }
         }
 
         private void SelectCell(uint pos)
@@ -424,12 +402,12 @@ namespace WpfUI.Logic
             if (selectedCell != uint.MaxValue && selectedCell != pos)
             {
                 // Unselect previously selected cell
-                UICells[selectedCell].UpdateSelected(false);
+                UICells[selectedCell].SetSelected(false);
             }
 
             // Select this cell
             selectedCell = pos;
-            UICells[pos].UpdateSelected(true);
+            UICells[pos].SetSelected(true);
         }
 
         #endregion

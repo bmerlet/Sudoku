@@ -8,19 +8,19 @@ namespace WpfUI.Logic
 {
     class LogEntry
     {
-        public enum EType { PickNumber, PickPossibles }
-
-        public readonly EType Type;
         public readonly uint Position;
-        public readonly uint OldValue;
-        public readonly uint NewValue;
+        public readonly uint OldNumber;
+        public readonly uint OldPossibles;
+        public readonly uint NewNumber;
+        public readonly uint NewPossibles;
 
-        public LogEntry(EType type, uint position, uint oldValue, uint newValue)
+        public LogEntry(uint position, uint oldNumber, uint newNumber, uint oldPossibles, uint newPossibles)
         {
-            Type = type;
             Position = position;
-            OldValue = oldValue;
-            NewValue = newValue;
+            OldNumber = oldNumber;
+            NewNumber = newNumber;
+            OldPossibles = oldPossibles;
+            NewPossibles = newPossibles;
         }
     }
 }

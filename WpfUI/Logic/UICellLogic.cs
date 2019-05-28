@@ -12,6 +12,8 @@ namespace WpfUI.Logic
 {
     class UICellLogic : LogicBase
     {
+        #region Private members
+
         // Color scheme
         private readonly Brush normalBackground = Brushes.Transparent;
         private readonly Brush givenBackground = Brushes.LightGray;
@@ -28,8 +30,12 @@ namespace WpfUI.Logic
         // If given
         private bool isGiven;
 
-        // What possibles are on
-        private bool[] possibles = new bool[Creator.ROW_SIZE];
+        // What possibles are on (bit-list)
+        private int possibles;
+
+        #endregion
+
+        #region Constructor
 
         public UICellLogic(uint cellindex)
         {
@@ -43,6 +49,10 @@ namespace WpfUI.Logic
             PossiblesForeground = normalForeground;
         }
 
+        #endregion
+
+        #region UI properties
+
         public String Number { get; private set; }
         public String Possibles { get; private set; }
 
@@ -50,40 +60,60 @@ namespace WpfUI.Logic
         public Brush Foreground { get; private set; }
         public Brush PossiblesForeground { get; private set; }
 
+        #endregion
+
+        #region Actions
+
         public void SetNumber(uint number)
         {
             Number = number == 0 ? "" : number.ToString();
             OnPropertyChanged(() => Number);
         }
 
-        public void UpdateGiven(bool given)
+        public void SetGiven(bool given)
         {
             isGiven = given;
             UpdateBackground();
         }
 
-        public void UpdateSelected(bool selected)
+        public void SetSelected(bool selected)
         {
             isSelected = selected;
             UpdateBackground();
         }
 
-        public void UpdateNumberStatus(bool error)
+        public void SetNumberStatus(bool error)
         {
             Foreground = error ? errorForeground : normalForeground;
             OnPropertyChanged(() => Foreground);
         }
 
-        public void UpdatePossibles(uint number)
+        public void SetPossibles(uint number)
         {
-            possibles[number - 1] = !possibles[number - 1];
+            // Flip bit corresponding to number
+            int bit = 1 << (int)number;
+            if ((possibles & bit) == 0)
+            {
+                possibles |= bit;
+            }
+            else
+            {
+                possibles &= ~bit;
+            }
+
+            // Rebuild string
+            BuildPossiblesString();
+        }
+
+        private void BuildPossiblesString()
+        { 
             Possibles = "";
 
-            for(uint i = 0; i < possibles.Length; i++)
+            foreach(var cv in Cell.AllValidCellValues)
             {
-                if (possibles[i])
+                if ((possibles & (1 << (int)cv)) != 0)
                 {
-                    Possibles += (i + 1).ToString();
+                    Possibles += cv.ToString();
                 }
             }
 
@@ -105,7 +135,7 @@ namespace WpfUI.Logic
         {
             if (Possibles != "")
             {
-                Array.Clear(possibles, 0, possibles.Length);
+                possibles = 0;
                 Possibles = "";
                 OnPropertyChanged(() => Possibles);
             }
@@ -115,7 +145,19 @@ namespace WpfUI.Logic
 
         public bool IsListedAsPossible(uint number)
         {
-            return possibles[number - 1];
+            return ((possibles & (1 << (int)number)) != 0);
+        }
+
+        public uint GetPossiblesAsBitList()
+        {
+            return (uint)possibles;
+        }
+
+        public void SetPossiblesAsBitList(uint possibles)
+        {
+            this.possibles = (int)possibles;
+
+            BuildPossiblesString();
         }
 
         private void UpdateBackground()
@@ -141,5 +183,7 @@ namespace WpfUI.Logic
                 OnPropertyChanged(() => Background);
             }
         }
+
+        #endregion
     }
 }
