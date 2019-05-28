@@ -59,6 +59,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Logic\LogEntry.cs" />
     <Compile Include="Logic\UICellLogic.cs" />
     <Compile Include="UICell.xaml.cs">
       <DependentUpon>UICell.xaml</DependentUpon>

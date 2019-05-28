@@ -12,15 +12,17 @@ namespace WpfUI.Logic
 {
     //
     // TODO:
-    //  Undo/Redo
     //  Find bug in creation algorithm
     //  Save/restore
     //  Hints
     //  Timing?
     //  Better show affected places when impossible
+    //  Shortcuts
     //
     class BoardLogic : LogicBase
     {
+        #region Private members
+
         // Creator/solver of sudoku puzzle
         private readonly Creator creator = new Creator();
 
@@ -42,9 +44,18 @@ namespace WpfUI.Logic
         // If we are showing the number picker
         private bool showingPicker;
 
+        // Log and current index in log
+        private readonly List<LogEntry> logEntries = new List<LogEntry>();
+        private int logIndex;
+
+        #endregion
+
+        #region Constructor
+
         public BoardLogic()
         {
-            UICells = new UICellLogic[Creator.BOARD_SIZE];
+            Undo = new CommandBase(OnUndo, false);
+            Redo = new CommandBase(OnRedo, false);
 
             for (uint i = 0; i < UICells.Length; i++)
             {
@@ -52,10 +63,31 @@ namespace WpfUI.Logic
             }
         }
 
+        #endregion
+
+        #region Events
+
+        // Activated when the puzzle is solved
         public event EventHandler PuzzleSolved;
 
-        public UICellLogic[] UICells { get; private set; }
+        #endregion
 
+        #region UI properties
+
+        // The cell logic array
+        public UICellLogic[] UICells { get; } = new UICellLogic[Creator.BOARD_SIZE];
+
+        // Undo/redo commands
+        public CommandBase Undo { get; private set; }
+        public CommandBase Redo { get; private set; }
+
+        #endregion
+
+        #region Actions
+
+        //
+        // Generate a puzzle of a specific difficulty
+        //
         public void OnGeneratePuzzle(EDifficulty difficulty)
         {
             creator.Verbose = false;
@@ -73,8 +105,15 @@ namespace WpfUI.Logic
             }
 
             selectedCell = uint.MaxValue;
+            logEntries.Clear();
+            Undo.SetCanExecute(false);
+            Redo.SetCanExecute(false);
+            logIndex = 0;
         }
 
+        //
+        // ZZZ This is test code
+        //
         public void OnPause()
         {
             uint numEasy = 0;
@@ -99,6 +138,9 @@ namespace WpfUI.Logic
             Console.WriteLine($"Simple: {numSimple}, Easy: {numEasy}, Inter: {numInter}, Hard: {numHard}");
         }
 
+        //
+        // Process a left mouse click
+        //
         public bool OnMouseLeft(uint row, uint col)
         {
             // We are picking a number, not possibles
@@ -107,6 +149,9 @@ namespace WpfUI.Logic
             return OnMouse(row, col);
         }
 
+        //
+        // Process a right mouse click
+        //
         public bool OnMouseRight(uint row, uint col)
         {
             // We are picking possibilities, not numbers
@@ -147,66 +192,52 @@ namespace WpfUI.Logic
             return showPicker;
         }
 
+        //
+        // Process setting a number
+        //
         public bool OnSetNumber(uint number)
         {
             if (puzzle != null && selectedCell != uint.MaxValue)
             {
+                var cell = UICells[selectedCell];
+
                 if (pickPossibilities)
                 {
-                    // Add/remove the number (except if it is 0)
-                    if (number != 0)
+                    uint oldValue = number;
+                    if (number == 0)
                     {
-                        UICells[selectedCell].UpdatePossibles(number);
-
-                        // If we have a table, check if this number is possible
-                        if (userTable != null)
+                        // Special case fir undo when clearing possibles
+                        // We need to remember what possibles were there
+                        oldValue = 0xf;
+                        foreach(var cv in Cell.AllValidCellValues)
                         {
-                            UpdateOnePossibleStatus(Position.GetCellFromCell(selectedCell));
+                            if (cell.IsListedAsPossible(cv))
+                            {
+                                oldValue |= (uint)(1 << ((int)cv + 4));
+                            }
                         }
                     }
-                    else
-                    {
-                        UICells[selectedCell].ResetPossibles();
-                    }
+
+                    SetPossible(selectedCell, number);
+
+                    // Log the change
+                    LogAction(LogEntry.EType.PickPossibles, selectedCell, oldValue, number);
 
                     // Keep the context menu open
                     return true;
                 }
                 else
                 {
-                    // Wipe out possibles
-                    UICells[selectedCell].ResetPossibles();
+                    uint oldValue = cell.Number == "" ? 0 : uint.Parse(cell.Number);
 
-                    // memorize the number
-                    userSolution.Cells[selectedCell] = number;
+                    // Set the number in the cell, and evaluate
+                    SetNumber(selectedCell, number);
 
-                    // Evaluate the correctness
-                    userTable = creator.Evaluate(userSolution);
-                    if (userTable == null)
-                    {
-                        // User selection makes puzzle impossible!
-                        UICells[selectedCell].UpdateNumberStatus(true);
-                    }
-                    else
-                    {
-                        UICells[selectedCell].UpdateNumberStatus(false);
-                        if (userTable.IsSolved)
-                        {
-                            // Finished
-                            PuzzleSolved?.Invoke(this, EventArgs.Empty);
-                        }
-                        else
-                        {
-                            // Update all possibles
-                            UpdateAllPossibleStatus();
-                        }
-                    }
-
-                    // Display it
-                    UICells[selectedCell].SetNumber(number);
+                    // Log the change
+                    LogAction(LogEntry.EType.PickNumber, selectedCell, oldValue, number);
 
                     // Unselect the cell
-                    UICells[selectedCell].UpdateSelected(false);
+                    cell.UpdateSelected(false);
                     selectedCell = uint.MaxValue;
 
                     // close context menu
@@ -215,6 +246,149 @@ namespace WpfUI.Logic
             }
 
             return false;
+        }
+
+        //
+        // Process Undo
+        //
+        private void OnUndo()
+        {
+            if (logIndex > 0)
+            {
+                var entryToUndo = logEntries[--logIndex];
+                if (logIndex == 0)
+                {
+                    Undo.SetCanExecute(false);
+                }
+
+                if (entryToUndo.Type == LogEntry.EType.PickNumber)
+                {
+                    SetNumber(entryToUndo.Position, entryToUndo.OldValue);
+                }
+                else
+                {
+                    if (entryToUndo.OldValue > 0xf)
+                    {
+                        // Special case of undoing the clearing of possibles
+                        foreach (var cv in Cell.AllValidCellValues)
+                        {
+                            if ((entryToUndo.OldValue & (uint)(1 << ((int)cv + 4))) != 0)
+                            {
+                                SetPossible(entryToUndo.Position, cv);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        SetPossible(entryToUndo.Position, entryToUndo.OldValue);
+                    }
+                }
+
+                Redo.SetCanExecute(true);
+            }
+        }
+
+        //
+        // Process Redo
+        //
+        private void OnRedo()
+        {
+            if (logIndex < logEntries.Count)
+            {
+                var entryToRedo = logEntries[logIndex++];
+                if (logIndex == logEntries.Count)
+                {
+                    Redo.SetCanExecute(false);
+                }
+
+                if (entryToRedo.Type == LogEntry.EType.PickNumber)
+                {
+                    SetNumber(entryToRedo.Position, entryToRedo.NewValue);
+                }
+                else
+                {
+                    SetPossible(entryToRedo.Position, entryToRedo.NewValue);
+                }
+
+                Undo.SetCanExecute(true);
+            }
+        }
+
+        private void LogAction(LogEntry.EType type, uint position, uint oldValue, uint newValue)
+        {
+            var entry = new LogEntry(type, position, oldValue, newValue);
+            if (logIndex < logEntries.Count)
+            {
+                logEntries[logIndex] = entry;
+            }
+            else
+            {
+                logEntries.Add(entry);
+            }
+
+            logIndex++;
+            Redo.SetCanExecute(false);
+            Undo.SetCanExecute(true);
+        }
+
+        //
+        // Set a number
+        //
+        private void SetNumber(uint pos, uint number)
+        {
+            var cell = UICells[pos];
+
+            // Wipe out possibles
+            cell.ResetPossibles();
+
+            // memorize the number
+            userSolution.Cells[pos] = number;
+
+            // Evaluate the correctness
+            userTable = creator.Evaluate(userSolution);
+            if (userTable == null)
+            {
+                // User selection makes puzzle impossible!
+                cell.UpdateNumberStatus(true);
+            }
+            else
+            {
+                cell.UpdateNumberStatus(false);
+                if (userTable.IsSolved)
+                {
+                    // Finished
+                    PuzzleSolved?.Invoke(this, EventArgs.Empty);
+                }
+                else
+                {
+                    // Update all possibles
+                    UpdateAllPossibleStatus();
+                }
+            }
+
+            // Display it
+            cell.SetNumber(number);
+        }
+
+        private void SetPossible(uint position, uint number)
+        {
+            var cell = UICells[position];
+
+            // Add/remove the number (except if it is 0)
+            if (number != 0)
+            {
+                cell.UpdatePossibles(number);
+
+                // If we have a table, check if this number is possible
+                if (userTable != null)
+                {
+                    UpdateOnePossibleStatus(Position.GetCellFromCell(selectedCell));
+                }
+            }
+            else
+            {
+                cell.ResetPossibles();
+            }
         }
 
         private void UpdateAllPossibleStatus()
@@ -257,5 +431,7 @@ namespace WpfUI.Logic
             selectedCell = pos;
             UICells[pos].UpdateSelected(true);
         }
+
+        #endregion
     }
 }

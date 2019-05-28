@@ -105,7 +105,7 @@ namespace WpfUI.Logic
         {
             if (Possibles != "")
             {
-                possibles.Initialize();
+                Array.Clear(possibles, 0, possibles.Length);
                 Possibles = "";
                 OnPropertyChanged(() => Possibles);
             }

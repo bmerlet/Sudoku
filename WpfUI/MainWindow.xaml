@@ -6,9 +6,13 @@
         xmlns:local="clr-namespace:WpfUI"
         mc:Ignorable="d"
         Title="Sudoku" Height="640" Width="740">
+
+    <!-- Key bindings -->
     <Window.InputBindings >
         <KeyBinding Key="N" Modifiers="Ctrl"  Command="{Binding NewEasy}"/>
         <KeyBinding Key="F2"                  Command="{Binding NewEasy}"/>
+        <KeyBinding Key="Y" Modifiers="Ctrl"  Command="{Binding BoardLogic.Redo}"/>
+        <KeyBinding Key="Z" Modifiers="Ctrl"  Command="{Binding BoardLogic.Undo}"/>
     </Window.InputBindings>
     <Window.Resources>
         <ResourceDictionary>
@@ -25,32 +29,34 @@
             </Style>
 
             <!-- Number picker context menu -->
-            <ContextMenu x:Key="numberPickerContextMenu" Width="150" Height="170">
+            <ContextMenu x:Key="numberPickerContextMenu" Width="150" Height="170" >
                 <ContextMenu.Template>
                     <ControlTemplate>
-                        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="*"/>
-                                <RowDefinition Height="*"/>
-                                <RowDefinition Height="*"/>
-                                <RowDefinition Height="*"/>
-                            </Grid.RowDefinitions>
-                            <Button Style="{StaticResource NumberButton}" Content="1" Click="ClickNumber"/>
-                            <Button Style="{StaticResource NumberButton}" Content="2" Click="ClickNumber" Grid.Column="1"/>
-                            <Button Style="{StaticResource NumberButton}" Content="3" Click="ClickNumber" Grid.Column="2"/>
-                            <Button Style="{StaticResource NumberButton}" Content="4" Click="ClickNumber" Grid.Column="0" Grid.Row="1"/>
-                            <Button Style="{StaticResource NumberButton}" Content="5" Click="ClickNumber" Grid.Column="1" Grid.Row="1"/>
-                            <Button Style="{StaticResource NumberButton}" Content="6" Click="ClickNumber" Grid.Column="2" Grid.Row="1"/>
-                            <Button Style="{StaticResource NumberButton}" Content="7" Click="ClickNumber" Grid.Column="0" Grid.Row="2"/>
-                            <Button Style="{StaticResource NumberButton}" Content="8" Click="ClickNumber" Grid.Column="1" Grid.Row="2"/>
-                            <Button Style="{StaticResource NumberButton}" Content="9" Click="ClickNumber" Grid.Column="2" Grid.Row="2"/>
-                            <Button Style="{StaticResource NumberButton}" Content="Clear" Click="ClickClear" Grid.Row="3" Grid.ColumnSpan="3"/>
+                        <Border Margin="12,12,0,0">
+                            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <Button Style="{StaticResource NumberButton}" Content="1" Click="ClickNumber"/>
+                                <Button Style="{StaticResource NumberButton}" Content="2" Click="ClickNumber" Grid.Column="1"/>
+                                <Button Style="{StaticResource NumberButton}" Content="3" Click="ClickNumber" Grid.Column="2"/>
+                                <Button Style="{StaticResource NumberButton}" Content="4" Click="ClickNumber" Grid.Column="0" Grid.Row="1"/>
+                                <Button Style="{StaticResource NumberButton}" Content="5" Click="ClickNumber" Grid.Column="1" Grid.Row="1"/>
+                                <Button Style="{StaticResource NumberButton}" Content="6" Click="ClickNumber" Grid.Column="2" Grid.Row="1"/>
+                                <Button Style="{StaticResource NumberButton}" Content="7" Click="ClickNumber" Grid.Column="0" Grid.Row="2"/>
+                                <Button Style="{StaticResource NumberButton}" Content="8" Click="ClickNumber" Grid.Column="1" Grid.Row="2"/>
+                                <Button Style="{StaticResource NumberButton}" Content="9" Click="ClickNumber" Grid.Column="2" Grid.Row="2"/>
+                                <Button Style="{StaticResource NumberButton}" Content="Clear" Click="ClickClear" Grid.Row="3" Grid.ColumnSpan="3"/>
                         </Grid>
+                        </Border>
                     </ControlTemplate>
                 </ContextMenu.Template>
             </ContextMenu>
@@ -58,7 +64,12 @@
         </ResourceDictionary>
     </Window.Resources>
     <DockPanel>
+        <!-- Command panel -->
         <Grid DockPanel.Dock="Right" Margin="0,0,20,20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="4*"/>
                 <RowDefinition Height="*"/>
@@ -67,13 +78,16 @@
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <Button Style="{StaticResource CommandButton}" Grid.Row="1" Content="Pause" Command="{Binding Pause}"/>
-            <Button Style="{StaticResource CommandButton}" Grid.Row="2" Content="Clear" Command="{Binding Clear}"/>
-            <Button Style="{StaticResource CommandButton}" Grid.Row="3" Content="New easy" Command="{Binding NewEasy}"/>
-            <Button Style="{StaticResource CommandButton}" Grid.Row="4" Content="New medium" Command="{Binding NewMedium}"/>
-            <Button Style="{StaticResource CommandButton}" Grid.Row="5" Content="New hard" Command="{Binding NewHard}"/>
-            <Button Style="{StaticResource CommandButton}" Grid.Row="6" Content="New very hard" Command="{Binding NewVeryHard}"/>
+            <Button Style="{StaticResource CommandButton}" Grid.ColumnSpan="2" Grid.Row="1" Content="Pause" Command="{Binding Pause}"/>
+            <Button Style="{StaticResource CommandButton}" Grid.ColumnSpan="2" Grid.Row="2" Content="Clear" Command="{Binding Clear}"/>
+            <Button Style="{StaticResource CommandButton}" Grid.ColumnSpan="2" Grid.Row="3" Content="New easy" Command="{Binding NewEasy}"/>
+            <Button Style="{StaticResource CommandButton}" Grid.ColumnSpan="2" Grid.Row="4" Content="New medium" Command="{Binding NewMedium}"/>
+            <Button Style="{StaticResource CommandButton}" Grid.ColumnSpan="2" Grid.Row="5" Content="New hard" Command="{Binding NewHard}"/>
+            <Button Style="{StaticResource CommandButton}" Grid.ColumnSpan="2" Grid.Row="6" Content="New very hard" Command="{Binding NewVeryHard}"/>
+            <Button Style="{StaticResource CommandButton}" Grid.Row="7" Grid.Column="0" Content="&lt;-" Command="{Binding BoardLogic.Undo}"/>
+            <Button Style="{StaticResource CommandButton}" Grid.Row="7" Grid.Column="1" Content="-&gt;" Command="{Binding BoardLogic.Redo}"/>
         </Grid>
         <Grid x:Name="board" DataContext="{Binding BoardLogic}" Margin="20">
             <Grid.Resources>
