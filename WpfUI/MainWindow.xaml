@@ -71,8 +71,7 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="4*"/>
-                <RowDefinition Height="*"/>
+                <RowDefinition Height="6*"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
@@ -85,9 +84,8 @@
             <Button Style="{StaticResource CommandButton}" Grid.ColumnSpan="2" Grid.Row="3" Content="New easy" Command="{Binding NewEasy}"/>
             <Button Style="{StaticResource CommandButton}" Grid.ColumnSpan="2" Grid.Row="4" Content="New medium" Command="{Binding NewMedium}"/>
             <Button Style="{StaticResource CommandButton}" Grid.ColumnSpan="2" Grid.Row="5" Content="New hard" Command="{Binding NewHard}"/>
-            <Button Style="{StaticResource CommandButton}" Grid.ColumnSpan="2" Grid.Row="6" Content="New very hard" Command="{Binding NewVeryHard}"/>
-            <Button Style="{StaticResource CommandButton}" Grid.Row="7" Grid.Column="0" Content="&lt;-" Command="{Binding BoardLogic.Undo}"/>
-            <Button Style="{StaticResource CommandButton}" Grid.Row="7" Grid.Column="1" Content="-&gt;" Command="{Binding BoardLogic.Redo}"/>
+            <Button Style="{StaticResource CommandButton}" Grid.Row="6" Grid.Column="0" Content="&lt;-" Command="{Binding BoardLogic.Undo}"/>
+            <Button Style="{StaticResource CommandButton}" Grid.Row="6" Grid.Column="1" Content="-&gt;" Command="{Binding BoardLogic.Redo}"/>
         </Grid>
         <Grid x:Name="board" DataContext="{Binding BoardLogic}" Margin="20">
             <Grid.Resources>

@@ -20,14 +20,12 @@ namespace WpfUI.Logic
             NewEasy = new CommandBase(() => BoardLogic.OnGeneratePuzzle(EDifficulty.SIMPLE));
             NewMedium = new CommandBase(() => BoardLogic.OnGeneratePuzzle(EDifficulty.EASY));
             NewHard = new CommandBase(() => BoardLogic.OnGeneratePuzzle(EDifficulty.INTERMEDIATE));
-            NewVeryHard = new CommandBase(() => BoardLogic.OnGeneratePuzzle(EDifficulty.EXPERT));
         }
 
         public CommandBase Pause { get; }
         public CommandBase NewEasy { get; }
         public CommandBase NewMedium { get; }
         public CommandBase NewHard { get; }
-        public CommandBase NewVeryHard { get; }
 
         public BoardLogic BoardLogic { get; }
 

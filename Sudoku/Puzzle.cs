@@ -25,7 +25,7 @@ namespace Sudoku
         internal Puzzle(Table solution, Statistics statistics)
         {
             // Memorize values
-            foreach(var pos in Position.AllPositions)
+            foreach (var pos in Position.AllPositions)
             {
                 Cells[pos.Cell] = solution[pos].Value;
             }
@@ -42,6 +42,12 @@ namespace Sudoku
 
             // memorize stats
             Statistics = statistics;
+        }
+
+        // Build a puzzle from an array
+        internal Puzzle(uint[] cells)
+        {
+            Array.Copy(cells, Cells, Cells.Length);
         }
 
         // IPrintSource interface

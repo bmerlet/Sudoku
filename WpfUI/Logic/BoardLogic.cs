@@ -12,7 +12,6 @@ namespace WpfUI.Logic
 {
     //
     // TODO:
-    //  Find bug in creation algorithm
     //  Save/restore
     //  Hints
     //  Timing?
@@ -126,7 +125,7 @@ namespace WpfUI.Logic
         }
 
         //
-        // ZZZ This is test code
+        // ZZZ
         //
         public void OnPause()
         {

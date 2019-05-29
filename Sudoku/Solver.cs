@@ -1,17 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Sudoku
 {
     public class Solver
     {
+        #region private members
+
         private Table solution = new Table();
         private List<LogEntry> logEntries = new List<LogEntry>();
         protected Random random = new Random();
 
+        #endregion
+
+        #region Debug properties
+
         public bool Verbose { get; set; }
         public bool TrackTiming { get; set; }
         protected bool LogDecisions;
+
+        #endregion
 
         #region Solver
 
@@ -42,6 +51,9 @@ namespace Sudoku
             return solvedPuzzle;
         }
 
+        //
+        // Take a puzzle and evaluate the possiblities
+        //
         public Table Evaluate(Puzzle puzzle)
         {
             // Copy the puzzle into "solution"
@@ -54,6 +66,9 @@ namespace Sudoku
             return solution;
         }
 
+        //
+        // Copy a naked puzzle into a solution, removing possiblities as the cells are marked
+        //
         private bool CopyPuzzleToSolution(Puzzle puzzle)
         {
             uint round = 1;
@@ -105,9 +120,11 @@ namespace Sudoku
                 }
             }
 
-            // We can't solve without guessing
+            // We can't solve without guessing, meaning the puzzle has
+            // more than one solution.
             if (withoutGuesses)
             {
+                // Indicate that the puzzle has more than one solution
                 return false;
             }
 
@@ -129,6 +146,11 @@ namespace Sudoku
                 // Not sure this actually happens
                 if (IsImpossible)
                 {
+                    if (Debugger.IsAttached)
+                    {
+                        Debugger.Break();
+                    }
+
                     Rollback(round);
                     continue;
                 }
@@ -173,7 +195,7 @@ namespace Sudoku
         }
 
         //
-        // Find positions with fewest possibilities then pick one at random
+        // Build a list of the positions with fewest possibilities
         //
         private List<Position> PositionsWithFewestPossibilities
         {
@@ -204,12 +226,14 @@ namespace Sudoku
             }
         }
 
+        // Check if solution has become impossible
         private bool IsImpossible
         {
             get
             {
                 foreach (var pos in Position.AllPositions)
                 {
+                    // Look for unmarked cells with no possibilities left
                     if (!solution[pos].IsMarked && solution[pos].CountPossibilities() == 0)
                     {
                         if (Verbose)
@@ -225,6 +249,7 @@ namespace Sudoku
             }
         }
 
+        // Reinstate all the possibilities removed by a round, and also unmark all cells marked during the round
         private void Rollback(uint round)
         {
             Log(round, EMarkType.ROLLBACK, null, uint.MaxValue);
@@ -234,6 +259,10 @@ namespace Sudoku
                 solution[pos].Unmark(round);
             }
         }
+
+        #endregion
+
+        #region Sieves
 
         private bool SingleSolveMove(uint round)
         {
@@ -335,11 +364,12 @@ namespace Sudoku
                         }
                     }
 
-                    // If this value is possible for only one position in the cell,
+                    // If this value is possible for only one position in the row/column/section,
                     // we have found our hidden single
                     if (count == 1)
                     {
                         Mark(position, cellValue, round, type);
+                        return true;
                     }
                 }
             }
@@ -1012,6 +1042,9 @@ namespace Sudoku
             return false;
         }
 
+        #endregion
+
+        #region Utilities
 
         //
         // Mark the given position with the given value
