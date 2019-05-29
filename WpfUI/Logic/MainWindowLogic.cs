@@ -17,7 +17,6 @@ namespace WpfUI.Logic
             BoardLogic = new BoardLogic();
 
             Pause = new CommandBase(BoardLogic.OnPause);
-            Clear = new CommandBase(OnClear, false);
             NewEasy = new CommandBase(() => BoardLogic.OnGeneratePuzzle(EDifficulty.SIMPLE));
             NewMedium = new CommandBase(() => BoardLogic.OnGeneratePuzzle(EDifficulty.EASY));
             NewHard = new CommandBase(() => BoardLogic.OnGeneratePuzzle(EDifficulty.INTERMEDIATE));
@@ -25,7 +24,6 @@ namespace WpfUI.Logic
         }
 
         public CommandBase Pause { get; }
-        public CommandBase Clear { get; }
         public CommandBase NewEasy { get; }
         public CommandBase NewMedium { get; }
         public CommandBase NewHard { get; }
@@ -36,11 +34,5 @@ namespace WpfUI.Logic
         public void OnLoaded()
         {
         }
-
-        private void OnClear()
-        {
-
-        }
-
     }
 }

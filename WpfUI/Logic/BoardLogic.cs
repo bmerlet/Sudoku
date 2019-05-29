@@ -56,6 +56,7 @@ namespace WpfUI.Logic
         {
             Undo = new CommandBase(OnUndo, false);
             Redo = new CommandBase(OnRedo, false);
+            Reset = new CommandBase(OnReset, false);
 
             for (uint i = 0; i < UICells.Length; i++)
             {
@@ -77,6 +78,9 @@ namespace WpfUI.Logic
         // The cell logic array
         public UICellLogic[] UICells { get; } = new UICellLogic[Creator.BOARD_SIZE];
 
+        // Reset command
+        public CommandBase Reset { get; private set; }
+
         // Undo/redo commands
         public CommandBase Undo { get; private set; }
         public CommandBase Redo { get; private set; }
@@ -92,6 +96,15 @@ namespace WpfUI.Logic
         {
             creator.Verbose = false;
             puzzle = creator.GeneratePuzzle(difficulty);
+
+            OnReset();
+        }
+
+        //
+        // Process reset
+        //
+        private void OnReset()
+        {
             userSolution = new Puzzle(puzzle, null);
             userTable = creator.Evaluate(userSolution);
 
@@ -108,6 +121,7 @@ namespace WpfUI.Logic
             logEntries.Clear();
             Undo.SetCanExecute(false);
             Redo.SetCanExecute(false);
+            Reset.SetCanExecute(false);
             logIndex = 0;
         }
 
@@ -255,11 +269,12 @@ namespace WpfUI.Logic
                 if (logIndex == 0)
                 {
                     Undo.SetCanExecute(false);
+                    Reset.SetCanExecute(false);
                 }
 
                 SetNumber(entryToUndo.Position, entryToUndo.OldNumber);
                 UICells[entryToUndo.Position].SetPossiblesAsBitList(entryToUndo.OldPossibles);
-                UpdateAllPossibleStatus();
+                UpdateAllNumberAndPossibleStatus();
 
                 Redo.SetCanExecute(true);
             }
@@ -280,9 +295,10 @@ namespace WpfUI.Logic
 
                 SetNumber(entryToRedo.Position, entryToRedo.NewNumber);
                 UICells[entryToRedo.Position].SetPossiblesAsBitList(entryToRedo.NewPossibles);
-                UpdateAllPossibleStatus();
+                UpdateAllNumberAndPossibleStatus();
 
                 Undo.SetCanExecute(true);
+                Reset.SetCanExecute(true);
             }
         }
 
@@ -301,6 +317,7 @@ namespace WpfUI.Logic
             logIndex++;
             Redo.SetCanExecute(false);
             Undo.SetCanExecute(true);
+            Reset.SetCanExecute(true);
         }
 
         //
@@ -326,6 +343,10 @@ namespace WpfUI.Logic
             else
             {
                 cell.SetNumberStatus(false);
+
+                // Update all number and all possibles
+                UpdateAllNumberAndPossibleStatus();
+
                 if (userTable.IsSolved)
                 {
                     // Finished
@@ -333,8 +354,6 @@ namespace WpfUI.Logic
                 }
                 else
                 {
-                    // Update all possibles
-                    UpdateAllPossibleStatus();
                 }
             }
 
@@ -363,13 +382,14 @@ namespace WpfUI.Logic
             }
         }
 
-        private void UpdateAllPossibleStatus()
+        private void UpdateAllNumberAndPossibleStatus()
         {
             if (userTable != null)
             {
                 foreach (var pos in Position.AllPositions)
                 {
                     UpdateOnePossibleStatus(pos);
+                    UICells[pos.Cell].SetNumberStatus(false);
                 }
             }
         }
