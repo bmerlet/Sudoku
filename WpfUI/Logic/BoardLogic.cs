@@ -161,7 +161,8 @@ namespace WpfUI.Logic
         {
             if (userTable != null)
             {
-                var pos = creator.GetHint(userSolution);
+                var tmpPuzzle = new Puzzle(userSolution, null);
+                var pos = creator.GetHint(tmpPuzzle);
                 if (pos != null)
                 {
                     SelectCell(pos.Cell);
