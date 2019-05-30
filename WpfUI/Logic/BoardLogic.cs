@@ -14,7 +14,6 @@ namespace WpfUI.Logic
     // TODO:
     //  Save/restore
     //  Timing?
-    //  Shortcuts (0-9, Esc)
     //
     class BoardLogic : LogicBase
     {
@@ -59,6 +58,7 @@ namespace WpfUI.Logic
             Reset = new CommandBase(OnReset, false);
             Check = new CommandBase(OnCheck, false);
             Hint = new CommandBase(OnHint, false);
+            KbdNumber = new CommandBase(OnKbdNumber, true);
 
             for (uint i = 0; i < UICells.Length; i++)
             {
@@ -87,9 +87,12 @@ namespace WpfUI.Logic
         public CommandBase Undo { get; private set; }
         public CommandBase Redo { get; private set; }
 
-        // Check and Hint command
+        // Check and Hint command (^C and ^H)
         public CommandBase Check { get; private set; }
         public CommandBase Hint { get; private set; }
+
+        // User typed a number
+        public CommandBase KbdNumber { get; private set; }
 
         #endregion
 
@@ -248,7 +251,18 @@ namespace WpfUI.Logic
         }
 
         //
-        // Process setting a number
+        // Process user setting a number from keyoard
+        //
+        public void OnKbdNumber(object arg)
+        {
+            if (puzzle != null && selectedCell != uint.MaxValue && arg is string numString)
+            {
+                OnSetNumber(uint.Parse(numString));
+            }
+        }
+
+        //
+        // Process user setting a number via the picker
         //
         public bool OnSetNumber(uint number)
         {
