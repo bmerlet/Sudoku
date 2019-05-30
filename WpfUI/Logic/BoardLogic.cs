@@ -56,6 +56,7 @@ namespace WpfUI.Logic
             Undo = new CommandBase(OnUndo, false);
             Redo = new CommandBase(OnRedo, false);
             Reset = new CommandBase(OnReset, false);
+            Check = new CommandBase(OnCheck, false);
 
             for (uint i = 0; i < UICells.Length; i++)
             {
@@ -84,6 +85,9 @@ namespace WpfUI.Logic
         public CommandBase Undo { get; private set; }
         public CommandBase Redo { get; private set; }
 
+        // Check command
+        public CommandBase Check { get; private set; }
+
         #endregion
 
         #region Actions
@@ -95,6 +99,7 @@ namespace WpfUI.Logic
         {
             creator.Verbose = false;
             puzzle = creator.GeneratePuzzle(difficulty);
+            Check.SetCanExecute(true);
 
             OnReset();
         }
@@ -122,6 +127,25 @@ namespace WpfUI.Logic
             Redo.SetCanExecute(false);
             Reset.SetCanExecute(false);
             logIndex = 0;
+        }
+
+        //
+        // Process check
+        //
+        private void OnCheck()
+        {
+            // Get the solution to the initial puzzle
+            var solution = creator.Solve(puzzle, true);
+
+            // Flag any value that the user guessed and is different
+            for(uint pos = 0; pos < solution.Cells.Length; pos++)
+            {
+                if (userSolution.Cells[pos] != 0 &&
+                    userSolution.Cells[pos] != solution.Cells[pos])
+                {
+                    UICells[pos].SetNumberStatus(true);
+                }
+            }
         }
 
         //

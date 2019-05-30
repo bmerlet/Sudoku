@@ -28,7 +28,7 @@ namespace Sudoku
         /// Entry point to solve a sudoku puzzle
         /// </summary>
         /// <returns>statistics if solved, null otherwise</returns>
-        internal Puzzle Solve(Puzzle puzzle, bool withoutGuesses)
+        public Puzzle Solve(Puzzle puzzle, bool withoutGuesses)
         {
             // Copy the puzzle into "solution"
             if (!CopyPuzzleToSolution(puzzle))
@@ -271,8 +271,7 @@ namespace Sudoku
             if (OnlyValue(round, EMarkType.HIDDEN_SINGLE_ROW)) return true;
             if (OnlyValue(round, EMarkType.HIDDEN_SINGLE_COLUMN)) return true;
             if (HandleNakedPairs(round)) return true;
-            if (PointingRowReduction(round)) return true;
-            if (PointingColumnReduction(round)) return true;
+            if (PointingRowAndColumnReduction(round)) return true;
             if (RowBoxReduction(round)) return true;
             if (ColumnBoxReduction(round)) return true;
             if (HiddenPairInRow(round)) return true;
@@ -480,10 +479,10 @@ namespace Sudoku
         }
 
         //
-        // If a value can only live in a specific row of a section, then it necessarily lives in
-        // another row for the 2 other sections that share this row. 
+        // If a value can only live in a specific row/column of a section, then it necessarily lives in
+        // another row/column for the 2 other sections that share this row/column. 
         //
-        private bool PointingRowReduction(uint round)
+        private bool PointingRowAndColumnReduction(uint round)
         {
             // Iterate on all values
             foreach (var cellValue in Cell.AllValidCellValues)
@@ -491,38 +490,55 @@ namespace Sudoku
                 // Iterate on all sections
                 foreach (var sectionPos in Position.AllSectionStarts)
                 {
-                    uint boxRow = uint.MaxValue;
+                    uint row = uint.MaxValue;
+                    bool possibleInDifferentRow = false;
+                    uint column = uint.MaxValue;
+                    bool possibleInDifferentColumn = false;
 
                     // Iterate on all cells of the section
-                    foreach(var pos in sectionPos.AllSectionCells)
+                    foreach (var pos in sectionPos.AllSectionCells)
                     {
                         if (solution[pos].IsPossible(cellValue))
                         {
-                            if (boxRow == uint.MaxValue)
+                            if (row == uint.MaxValue)
                             {
                                 // value is possible in this row
-                                boxRow = pos.Row;
+                                row = pos.Row;
                             }
-                            else if (boxRow == pos.Row)
+                            else if (row == pos.Row)
                             {
                                 // value is possible in the same row - do nothing
                             }
                             else
                             {
                                 // value is possible but in a different row - failed
-                                boxRow = uint.MaxValue;
-                                break;
+                                possibleInDifferentRow = true;
+                            }
+
+                            if (column == uint.MaxValue)
+                            {
+                                // value is possible in this column
+                                column = pos.Column;
+                            }
+                            else if (column == pos.Column)
+                            {
+                                // value is possible in the same column - do nothing
+                            }
+                            else
+                            {
+                                // value is possible but in a different column - failed
+                                possibleInDifferentColumn = true;
                             }
                         }
                     }
 
                     // See if all the possibles for the current value are in the same row
-                    if (boxRow != uint.MaxValue)
+                    if (row != uint.MaxValue && !possibleInDifferentRow)
                     {
                         // Yes. So the value lives somewhere on this row in this section, therefore
                         // it does not live in this row in the sections sharing the same row
                         bool doneSomething = false;
-                        foreach(var rowPos in Position.GetCellFromRow(boxRow).AllColumnCells)
+                        foreach(var rowPos in Position.GetCellFromRow(row).AllColumnCells)
                         {
                             if (rowPos.Section != sectionPos.Section)
                             {
@@ -536,56 +552,14 @@ namespace Sudoku
                             return true;
                         }
                     }
-                }
-            }
-            return false;
-        }
-
-
-        //
-        // If a value can only live in a specific column of a section, then it necessarily lives in
-        // another column for the 2 other sections that share this column. 
-        //
-        private bool PointingColumnReduction(uint round)
-        {
-            // Iterate on all values
-            foreach (var cellValue in Cell.AllValidCellValues)
-            {
-                // Iterate on all sections
-                foreach (var sectionPos in Position.AllSectionStarts)
-                {
-                    uint boxColumn = uint.MaxValue;
-
-                    // Iterate on all cells of the section
-                    foreach (var pos in sectionPos.AllSectionCells)
-                    {
-                        if (solution[pos].IsPossible(cellValue))
-                        {
-                            if (boxColumn == uint.MaxValue)
-                            {
-                                // value is possible in this column
-                                boxColumn = pos.Column;
-                            }
-                            else if (boxColumn == pos.Column)
-                            {
-                                // value is possible in the same column - do nothing
-                            }
-                            else
-                            {
-                                // value is possible but in a different column
-                                boxColumn = uint.MaxValue;
-                                break;
-                            }
-                        }
-                    }
 
                     // See if all the possibles for the current value are in the same column
-                    if (boxColumn != uint.MaxValue)
+                    if (column != uint.MaxValue && !possibleInDifferentColumn)
                     {
                         // Yes. So the value lives somewhere on this column in this section, therefore
                         // it does not live in this column in the sections sharing the same column
                         bool doneSomething = false;
-                        foreach (var columnPos in Position.GetCellFromColumn(boxColumn).AllRowCells)
+                        foreach (var columnPos in Position.GetCellFromColumn(column).AllRowCells)
                         {
                             if (columnPos.Section != sectionPos.Section)
                             {
@@ -603,6 +577,7 @@ namespace Sudoku
             }
             return false;
         }
+
 
         //
         // If a value can only live in a specific section of a row, then it cannot live in
