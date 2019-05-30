@@ -13,10 +13,8 @@ namespace WpfUI.Logic
     //
     // TODO:
     //  Save/restore
-    //  Hints
     //  Timing?
-    //  Better show affected places when impossible
-    //  Shortcuts
+    //  Shortcuts (0-9, Esc)
     //
     class BoardLogic : LogicBase
     {
@@ -27,6 +25,9 @@ namespace WpfUI.Logic
 
         // The initial puzzle
         private Puzzle puzzle;
+
+        // The solution
+        private Puzzle solution;
 
         // The puzzle, as currently completed by the user
         private Puzzle userSolution;
@@ -57,6 +58,7 @@ namespace WpfUI.Logic
             Redo = new CommandBase(OnRedo, false);
             Reset = new CommandBase(OnReset, false);
             Check = new CommandBase(OnCheck, false);
+            Hint = new CommandBase(OnHint, false);
 
             for (uint i = 0; i < UICells.Length; i++)
             {
@@ -85,8 +87,9 @@ namespace WpfUI.Logic
         public CommandBase Undo { get; private set; }
         public CommandBase Redo { get; private set; }
 
-        // Check command
+        // Check and Hint command
         public CommandBase Check { get; private set; }
+        public CommandBase Hint { get; private set; }
 
         #endregion
 
@@ -99,7 +102,10 @@ namespace WpfUI.Logic
         {
             creator.Verbose = false;
             puzzle = creator.GeneratePuzzle(difficulty);
+            solution = creator.Solve(puzzle, true);
+
             Check.SetCanExecute(true);
+            Hint.SetCanExecute(true);
 
             OnReset();
         }
@@ -134,16 +140,28 @@ namespace WpfUI.Logic
         //
         private void OnCheck()
         {
-            // Get the solution to the initial puzzle
-            var solution = creator.Solve(puzzle, true);
-
-            // Flag any value that the user guessed and is different
+            // Flag any value that the user guessed and is different in the solution
             for(uint pos = 0; pos < solution.Cells.Length; pos++)
             {
                 if (userSolution.Cells[pos] != 0 &&
                     userSolution.Cells[pos] != solution.Cells[pos])
                 {
                     UICells[pos].SetNumberStatus(true);
+                }
+            }
+        }
+
+        //
+        // Process hint
+        //
+        private void OnHint()
+        {
+            if (userTable != null)
+            {
+                var pos = creator.GetHint(userSolution);
+                if (pos != null)
+                {
+                    SelectCell(pos.Cell);
                 }
             }
         }

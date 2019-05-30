@@ -12,6 +12,9 @@ namespace Sudoku
         private List<LogEntry> logEntries = new List<LogEntry>();
         protected Random random = new Random();
 
+        private bool findFirstMark;
+        private Position firstMarkPosition;
+
         #endregion
 
         #region Debug properties
@@ -64,6 +67,26 @@ namespace Sudoku
             }
 
             return solution;
+        }
+
+        public Position GetHint(Puzzle puzzle)
+        {
+            if (!CopyPuzzleToSolution(puzzle))
+            {
+                // Impossible puzzle
+                return null;
+            }
+
+            for (findFirstMark = true; findFirstMark;)
+            {
+                if (!SingleSolveMove(2))
+                {
+                    // Unsolvable puzzle
+                    return null;
+                }
+            }
+
+            return firstMarkPosition;
         }
 
         //
@@ -1035,6 +1058,12 @@ namespace Sudoku
             if (!solution[position].IsPossible(val))
             {
                 throw new InvalidOperationException("Position not possible");
+            }
+
+            if (findFirstMark)
+            {
+                findFirstMark = false;
+                firstMarkPosition = position;
             }
 
             // Enter the value in the solution, adorned with the round number (for rollback)
