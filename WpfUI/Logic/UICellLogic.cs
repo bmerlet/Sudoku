@@ -103,6 +103,7 @@ namespace WpfUI.Logic
 
             // Rebuild string
             BuildPossiblesString();
+            UpdatePossiblesStatus(false);
         }
 
         private void BuildPossiblesString()

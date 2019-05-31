@@ -66,7 +66,7 @@ namespace Sudoku
                 return null;
             }
 
-            return solution;
+            return new Table(solution);
         }
 
         public Position GetHint(Puzzle puzzle)

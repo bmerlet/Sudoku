@@ -28,6 +28,14 @@ namespace Sudoku
         {
         }
 
+        public Cell(Cell src)
+        {
+            Value = src.Value;
+            Round = src.Round;
+            Type = src.Type;
+            Array.Copy(src.possible, possible, possible.Length);
+        }
+
         public void Mark(uint value, uint round, EMarkType type)
         {
             Value = value;

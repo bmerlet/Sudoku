@@ -29,6 +29,15 @@ namespace Sudoku
             Reset();
         }
 
+        // Clone
+        public Table(Table src)
+        {
+            for (int i = 0; i < values.Length; i++)
+            {
+                values[i] =  new Cell(src.values[i]);
+            }
+        }
+
         // Reset to all unmarked
         public void Reset()
         {
