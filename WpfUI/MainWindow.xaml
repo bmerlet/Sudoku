@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfUI"
         mc:Ignorable="d"
-        Title="Sudoku" Height="640" Width="740">
+        Title="Sudoku" Height="640" Width="740" Icon="sudoku.ico">
 
     <!-- Key bindings -->
     <Window.InputBindings >
