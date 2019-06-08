@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 
-namespace Sudoku
+namespace Sudoku.Game
 {
     public class Creator : Solver
     {

@@ -4,25 +4,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Media;
 
+using Sudoku.Game;
 using Toolbox.UILogic;
 
-namespace WpfUI.Logic
+namespace Sudoku.UILogic
 {
-    class UICellLogic : LogicBase
+    public class UICellLogic : LogicBase
     {
         #region Private members
 
-        // Color scheme
-        private readonly Brush normalBackground = Brushes.Transparent;
-        private readonly Brush givenBackground = Brushes.LightGray;
-        private readonly Brush selectedBackground = Brushes.LightBlue;
-        private readonly Brush normalForeground = Brushes.Black;
-        private readonly Brush errorForeground = Brushes.Red;
-
         // my position
         private readonly uint cellindex;
+
+        // UI provider
+        private readonly IUIProvider uiProvider;
 
         // If selected
         private bool isSelected;
@@ -37,16 +33,17 @@ namespace WpfUI.Logic
 
         #region Constructor
 
-        public UICellLogic(uint cellindex)
+        public UICellLogic(IUIProvider uiProvider, uint cellindex)
         {
             this.cellindex = cellindex;
+            this.uiProvider = uiProvider;
 
             Number = "";
-            Background = normalBackground;
-            Foreground = normalForeground;
+            Background = uiProvider.GetBrush(EColors.NormalBackground);
+            Foreground = uiProvider.GetBrush(EColors.NormalForeground);
 
             Possibles = "";
-            PossiblesForeground = normalForeground;
+            PossiblesForeground = uiProvider.GetBrush(EColors.NormalForeground);
         }
 
         #endregion
@@ -56,9 +53,9 @@ namespace WpfUI.Logic
         public String Number { get; private set; }
         public String Possibles { get; private set; }
 
-        public Brush Background { get; private set; }
-        public Brush Foreground { get; private set; }
-        public Brush PossiblesForeground { get; private set; }
+        public object Background { get; private set; }
+        public object Foreground { get; private set; }
+        public object PossiblesForeground { get; private set; }
 
         #endregion
 
@@ -84,7 +81,7 @@ namespace WpfUI.Logic
 
         public void SetNumberStatus(bool error)
         {
-            Foreground = error ? errorForeground : normalForeground;
+            Foreground = uiProvider.GetBrush(error ? EColors.ErrorForeground : EColors.NormalForeground);
             OnPropertyChanged(() => Foreground);
         }
 
@@ -123,7 +120,7 @@ namespace WpfUI.Logic
 
         public void UpdatePossiblesStatus(bool error)
         {
-            var possiblesForeground = error ? errorForeground : normalForeground;
+            var possiblesForeground = uiProvider.GetBrush(error ? EColors.ErrorForeground : EColors.NormalForeground);
 
             if (PossiblesForeground != possiblesForeground)
             {
@@ -163,24 +160,26 @@ namespace WpfUI.Logic
 
         private void UpdateBackground()
         {
-            Brush background;
+            EColors background;
 
             if (isSelected)
             {
-                background = selectedBackground;
+                background =  EColors.SelectedBackground;
             }
             else if (isGiven)
             {
-                background = givenBackground;
+                background = EColors.GivenBackground;
             }
             else
             {
-                background = normalBackground;
+                background = EColors.NormalBackground;
             }
 
-            if (Background != background)
+            var backgroundBrush = uiProvider.GetBrush(background);
+
+            if (Background != backgroundBrush)
             {
-                Background = background;
+                Background = backgroundBrush;
                 OnPropertyChanged(() => Background);
             }
         }

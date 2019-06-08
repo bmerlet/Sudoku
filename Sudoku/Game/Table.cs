@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Sudoku
+namespace Sudoku.Game
 {
     /// <summary>
     /// Holds a sudoku puzzle with all the solution information

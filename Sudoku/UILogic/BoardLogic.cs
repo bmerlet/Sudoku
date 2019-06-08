@@ -3,19 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Media;
 
-using Sudoku;
+using Sudoku.Game;
 using Toolbox.UILogic;
 
-namespace WpfUI.Logic
+namespace Sudoku.UILogic
 {
     //
     // TODO:
     //  Save/restore
+    //  Winforms UI
+    //  ^P for possibles?
     //  Timing?
     //
-    class BoardLogic : LogicBase
+    public class BoardLogic : LogicBase
     {
         #region Private members
 
@@ -51,7 +52,7 @@ namespace WpfUI.Logic
 
         #region Constructor
 
-        public BoardLogic()
+        public BoardLogic(IUIProvider uiProvider)
         {
             Undo = new CommandBase(OnUndo, false);
             Redo = new CommandBase(OnRedo, false);
@@ -62,7 +63,7 @@ namespace WpfUI.Logic
 
             for (uint i = 0; i < UICells.Length; i++)
             {
-                UICells[i] = new UICellLogic(i);
+                UICells[i] = new UICellLogic(uiProvider, i);
             }
         }
 
@@ -168,33 +169,6 @@ namespace WpfUI.Logic
                     SelectCell(pos.Cell);
                 }
             }
-        }
-
-        //
-        // ZZZ
-        //
-        public void OnPause()
-        {
-            uint numEasy = 0;
-            uint numSimple = 0;
-            uint numInter = 0;
-            uint numHard = 0;
-
-            creator.TrackTiming = true;
-
-            for (int i = 0; i < 100; i++)
-            {
-                var puzzle = creator.GeneratePuzzle(EDifficulty.UNKNOWN, ESymmetry.RANDOM);
-                switch (puzzle.Statistics.Difficulty)
-                {
-                    case EDifficulty.SIMPLE: numSimple++; break;
-                    case EDifficulty.EASY: numEasy++; break;
-                    case EDifficulty.INTERMEDIATE: numInter++; break;
-                    case EDifficulty.EXPERT: numHard++; break;
-                }
-            }
-
-            Console.WriteLine($"Simple: {numSimple}, Easy: {numEasy}, Inter: {numInter}, Hard: {numHard}");
         }
 
         //

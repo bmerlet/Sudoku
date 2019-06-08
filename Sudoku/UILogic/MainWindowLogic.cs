@@ -3,29 +3,28 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Media;
 
-using Sudoku;
+using Sudoku.Game;
 using Toolbox.UILogic;
 
-namespace WpfUI.Logic
+namespace Sudoku.UILogic
 {
-    class MainWindowLogic : LogicBase
+    public class MainWindowLogic : LogicBase
     {
-        public MainWindowLogic()
+        public MainWindowLogic(IUIProvider uiProvider)
         {
-            BoardLogic = new BoardLogic();
+            BoardLogic = new BoardLogic(uiProvider);
 
-            Pause = new CommandBase(BoardLogic.OnPause);
             NewEasy = new CommandBase(() => BoardLogic.OnGeneratePuzzle(EDifficulty.SIMPLE));
             NewMedium = new CommandBase(() => BoardLogic.OnGeneratePuzzle(EDifficulty.EASY));
             NewHard = new CommandBase(() => BoardLogic.OnGeneratePuzzle(EDifficulty.INTERMEDIATE));
+            NewVeryHard = new CommandBase(() => BoardLogic.OnGeneratePuzzle(EDifficulty.EXPERT));
         }
 
-        public CommandBase Pause { get; }
         public CommandBase NewEasy { get; }
         public CommandBase NewMedium { get; }
         public CommandBase NewHard { get; }
+        public CommandBase NewVeryHard { get; }
 
         public BoardLogic BoardLogic { get; }
 

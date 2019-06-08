@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Sudoku
+namespace Sudoku.Game
 {
     /// <summary>
     /// Statistics about a (solved) sudoku puzzle

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Sudoku
+namespace Sudoku.Game
 {
     /// <summary>
     /// Position of cell in a sudoku puzzle - immutable

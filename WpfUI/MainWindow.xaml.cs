@@ -13,20 +13,19 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-using Sudoku;
-using WpfUI.Logic;
+using Sudoku.UILogic;
 
 namespace WpfUI
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, IUIProvider
     {
         private MainWindowLogic logic;
         public MainWindow()
         {
-            logic = new MainWindowLogic();
+            logic = new MainWindowLogic(this);
             DataContext = logic;
 
             InitializeComponent();
@@ -117,6 +116,20 @@ namespace WpfUI
         {
             ContextMenu contextMenu = FindResource("numberPickerContextMenu") as ContextMenu;
             contextMenu.IsOpen = logic.BoardLogic.OnSetNumber(number);
+        }
+
+        public object GetBrush(EColors color)
+        {
+            switch(color)
+            {
+                case EColors.NormalBackground: return Brushes.Transparent;
+                case EColors.GivenBackground: return Brushes.LightGray;
+                case EColors.SelectedBackground: return Brushes.LightBlue;
+                case EColors.NormalForeground: return Brushes.Black;
+                case EColors.ErrorForeground: return Brushes.Red;
+            }
+
+            return Brushes.Turquoise;
         }
     }
 }

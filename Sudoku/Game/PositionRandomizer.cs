@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Sudoku
+namespace Sudoku.Game
 {
     internal class PositionRandomizer
     {

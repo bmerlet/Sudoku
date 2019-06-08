@@ -4,7 +4,7 @@ using System.Text;
 
 using Toolbox.Attributes;
 
-namespace Sudoku
+namespace Sudoku.Game
 {
     internal class LogEntry
     {
