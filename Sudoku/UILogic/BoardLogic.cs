@@ -59,6 +59,10 @@ namespace Sudoku.UILogic
             Check = new CommandBase(OnCheck, false);
             Hint = new CommandBase(OnHint, false);
             KbdNumber = new CommandBase(OnKbdNumber, true);
+            MoveRight = new CommandBase(OnMoveRight, true);
+            MoveLeft = new CommandBase(OnMoveLeft, true);
+            MoveUp = new CommandBase(OnMoveUp, true);
+            MoveDown = new CommandBase(OnMoveDown, true);
 
             for (uint i = 0; i < UICells.Length; i++)
             {
@@ -93,6 +97,12 @@ namespace Sudoku.UILogic
 
         // User typed a number
         public CommandBase KbdNumber { get; private set; }
+
+        // User pressed an arrow key
+        public CommandBase MoveRight { get; private set; }
+        public CommandBase MoveLeft { get; private set; }
+        public CommandBase MoveUp { get; private set; }
+        public CommandBase MoveDown { get; private set; }
 
         #endregion
 
@@ -234,6 +244,54 @@ namespace Sudoku.UILogic
             {
                 OnSetNumber(uint.Parse(numString));
             }
+        }
+
+        //
+        // Process user using the arrow keys
+        //
+        public void OnMoveRight()
+        {
+            var curPos = GetSelectedPosition();
+            if (curPos.Column != Position.ROW_COL_SEC_SIZE - 1)
+            {
+                var newPos = Position.GetCell(curPos.Row, curPos.Column + 1);
+                SelectCell(newPos.Cell);
+            }
+        }
+
+        public void OnMoveLeft()
+        {
+            var curPos = GetSelectedPosition();
+            if (curPos.Column != 0)
+            {
+                var newPos = Position.GetCell(curPos.Row, curPos.Column - 1);
+                SelectCell(newPos.Cell);
+            }
+        }
+
+        public void OnMoveDown()
+        {
+            var curPos = GetSelectedPosition();
+            if (curPos.Row != Position.ROW_COL_SEC_SIZE - 1)
+            {
+                var newPos = Position.GetCell(curPos.Row + 1, curPos.Column);
+                SelectCell(newPos.Cell);
+            }
+        }
+
+        public void OnMoveUp()
+        {
+            var curPos = GetSelectedPosition();
+            if (curPos.Row != 0)
+            {
+                var newPos = Position.GetCell(curPos.Row - 1, curPos.Column);
+                SelectCell(newPos.Cell);
+            }
+        }
+
+        private Position GetSelectedPosition()
+        {
+            return selectedCell == uint.MaxValue ? Position.GetCellFromCell(Position.BOARD_SIZE / 2) : Position.GetCellFromCell(selectedCell);
         }
 
         //

@@ -147,6 +147,26 @@ namespace FormsUI
                 boardLogic.KbdNumber.Execute(num.ToString());
             }
 
+            if (keyData == Keys.Right || keyData == Keys.L)
+            {
+                boardLogic.MoveRight.Execute();
+            }
+
+            if (keyData == Keys.Left || keyData == Keys.J)
+            {
+                boardLogic.MoveLeft.Execute();
+            }
+
+            if (keyData == Keys.Up || keyData == Keys.I)
+            {
+                boardLogic.MoveUp.Execute();
+            }
+
+            if (keyData == Keys.Down || keyData == Keys.K)
+            {
+                boardLogic.MoveDown.Execute();
+            }
+
             return false;
         }
 

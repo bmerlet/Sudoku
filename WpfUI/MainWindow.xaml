@@ -35,6 +35,14 @@
         <KeyBinding Key="NumPad7"             Command="{Binding BoardLogic.KbdNumber}" CommandParameter="7"/>
         <KeyBinding Key="NumPad8"             Command="{Binding BoardLogic.KbdNumber}" CommandParameter="8"/>
         <KeyBinding Key="NumPad9"             Command="{Binding BoardLogic.KbdNumber}" CommandParameter="9"/>
+        <KeyBinding Key="Right"               Command="{Binding BoardLogic.MoveRight}"/>
+        <KeyBinding Key="L"                   Command="{Binding BoardLogic.MoveRight}"/>
+        <KeyBinding Key="Left"                Command="{Binding BoardLogic.MoveLeft}"/>
+        <KeyBinding Key="J"                   Command="{Binding BoardLogic.MoveLeft}"/>
+        <KeyBinding Key="Up"                  Command="{Binding BoardLogic.MoveUp}"/>
+        <KeyBinding Key="I"                   Command="{Binding BoardLogic.MoveUp}"/>
+        <KeyBinding Key="Down"                Command="{Binding BoardLogic.MoveDown}"/>
+        <KeyBinding Key="K"                   Command="{Binding BoardLogic.MoveDown}"/>
     </Window.InputBindings>
     <Window.Resources>
         <ResourceDictionary>
