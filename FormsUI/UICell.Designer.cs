@@ -49,16 +49,18 @@
             // 
             // labelNumber
             // 
-            this.labelNumber.AutoSize = true;
+            this.labelNumber.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.labelNumber.AutoSize = false;
             this.labelNumber.BackColor = System.Drawing.Color.Transparent;
             this.labelNumber.Font = new System.Drawing.Font("Microsoft Sans Serif", 26F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelNumber.Location = new System.Drawing.Point(0, 0);
             this.labelNumber.Margin = new System.Windows.Forms.Padding(0);
             this.labelNumber.Name = "labelNumber";
-            this.labelNumber.Padding = new System.Windows.Forms.Padding(12, 12, 0, 0);
-            this.labelNumber.Size = new System.Drawing.Size(48, 51);
+            this.labelNumber.Padding = new System.Windows.Forms.Padding(0);
+            this.labelNumber.Size = new System.Drawing.Size(48, 48);
             this.labelNumber.TabIndex = 0;
             this.labelNumber.Text = "8";
+            this.labelNumber.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // tableLayoutPanelBorders
             // 

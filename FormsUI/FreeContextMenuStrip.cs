@@ -30,7 +30,7 @@ namespace FormsUI
             // Setup the context menu
             ShowImageMargin = false;
             ShowCheckMargin = false;
-            Margin = GripMargin = new Padding(0, 0, 0, 0);
+            Margin = GripMargin = Padding = NullPadding;
             BackColor = content.BackColor;
             MaximumSize = new Size(content.Width, content.Height + 2); // + 2 to allow for padding below
 
@@ -42,6 +42,17 @@ namespace FormsUI
         protected override Padding DefaultPadding => new Padding(0, 1, 0, 1); // Necessary otherwise control does not fit
         protected override Padding DefaultMargin => NullPadding;
         protected override Padding DefaultGripMargin => NullPadding;
+
+        protected override void OnLayout(LayoutEventArgs e)
+        {
+            content.SetBounds(0, 0, content.Width, content.Height);
+            this.Size = new Size(content.Width, content.Height + 2);
+            this.SetDisplayedItems();
+            this.OnLayoutCompleted(EventArgs.Empty);
+            this.Invalidate();
+            //Padding = NullPadding;
+            //base.OnLayout(e);
+        }
 
         protected override bool ProcessDialogKey(Keys keyData)
         {

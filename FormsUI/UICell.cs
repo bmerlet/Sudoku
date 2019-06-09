@@ -43,6 +43,7 @@ namespace FormsUI
 
             // Listen to mouse clicks
             panelCell.MouseDown += OnMouseDown;
+            labelNumber.MouseDown += OnMouseDown;
         }
 
         private void OnMouseDown(object sender, MouseEventArgs e)
