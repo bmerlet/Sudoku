@@ -8,37 +8,40 @@ using System.Windows.Forms;
 
 namespace FormsUI
 {
+    /// <summary>
+    /// Trick the context menu strip into displaying something that is not a menu.
+    /// </summary>
     class FreeContextMenuStrip : ContextMenuStrip
     {
         private readonly Control content;
+        private readonly Padding NullPadding = new Padding(0, 0, 0, 0);
 
         public FreeContextMenuStrip(Control content)
         {
             this.content = content;
-            content.Location = Point.Empty; // ZZZ???
+            content.Location = Point.Empty;
 
             // Setup the host as hosting the content
             ToolStripControlHost host = new ToolStripControlHost(content);
-            //host.AutoSize = false;
-            host.Padding = new Padding(0, 0, 0, 0);
-            host.Margin = new Padding(0, 0, 0, 0);
+            host.Padding = NullPadding;
+            host.Margin = NullPadding;
             host.Size = new Size(content.Width, content.Height);
-            //host.Width = content.Width;
-            //host.Height = content.Height;
 
             // Setup the context menu
             ShowImageMargin = false;
             ShowCheckMargin = false;
-            Padding = new Padding(0, 0, 0, 0);
-            Margin = new Padding(0, 0, 0, 0);
+            Margin = GripMargin = new Padding(0, 0, 0, 0);
             BackColor = content.BackColor;
-            //AutoSize = true;
-            //Width = content.Width;
-            //Height = content.Height;
+            MaximumSize = new Size(content.Width, content.Height + 2); // + 2 to allow for padding below
 
             // Add the host to the context menu
             Items.Add(host);
         }
+
+        // Avoid menu-specific indentations
+        protected override Padding DefaultPadding => new Padding(0, 1, 0, 1); // Necessary otherwise control does not fit
+        protected override Padding DefaultMargin => NullPadding;
+        protected override Padding DefaultGripMargin => NullPadding;
 
         protected override bool ProcessDialogKey(Keys keyData)
         {

@@ -87,9 +87,9 @@
             // buttonUndo
             // 
             this.buttonUndo.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.buttonUndo.Location = new System.Drawing.Point(4, 511);
+            this.buttonUndo.Location = new System.Drawing.Point(4, 509);
             this.buttonUndo.Name = "buttonUndo";
-            this.buttonUndo.Size = new System.Drawing.Size(55, 23);
+            this.buttonUndo.Size = new System.Drawing.Size(55, 28);
             this.buttonUndo.TabIndex = 5;
             this.buttonUndo.Text = "<-";
             this.buttonUndo.UseVisualStyleBackColor = true;
@@ -99,9 +99,9 @@
             // 
             this.buttonReset.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.tableLayoutPanelButtons.SetColumnSpan(this.buttonReset, 2);
-            this.buttonReset.Location = new System.Drawing.Point(4, 462);
+            this.buttonReset.Location = new System.Drawing.Point(9, 460);
             this.buttonReset.Name = "buttonReset";
-            this.buttonReset.Size = new System.Drawing.Size(115, 23);
+            this.buttonReset.Size = new System.Drawing.Size(105, 28);
             this.buttonReset.TabIndex = 4;
             this.buttonReset.Text = "Reset";
             this.buttonReset.UseVisualStyleBackColor = true;
@@ -111,9 +111,9 @@
             // 
             this.buttonNewVeryHard.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.tableLayoutPanelButtons.SetColumnSpan(this.buttonNewVeryHard, 2);
-            this.buttonNewVeryHard.Location = new System.Drawing.Point(4, 416);
+            this.buttonNewVeryHard.Location = new System.Drawing.Point(9, 414);
             this.buttonNewVeryHard.Name = "buttonNewVeryHard";
-            this.buttonNewVeryHard.Size = new System.Drawing.Size(115, 23);
+            this.buttonNewVeryHard.Size = new System.Drawing.Size(105, 28);
             this.buttonNewVeryHard.TabIndex = 3;
             this.buttonNewVeryHard.Text = "New very hard";
             this.buttonNewVeryHard.UseVisualStyleBackColor = true;
@@ -123,9 +123,9 @@
             // 
             this.buttonNewHard.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.tableLayoutPanelButtons.SetColumnSpan(this.buttonNewHard, 2);
-            this.buttonNewHard.Location = new System.Drawing.Point(4, 370);
+            this.buttonNewHard.Location = new System.Drawing.Point(9, 368);
             this.buttonNewHard.Name = "buttonNewHard";
-            this.buttonNewHard.Size = new System.Drawing.Size(115, 23);
+            this.buttonNewHard.Size = new System.Drawing.Size(105, 28);
             this.buttonNewHard.TabIndex = 2;
             this.buttonNewHard.Text = "New hard";
             this.buttonNewHard.UseVisualStyleBackColor = true;
@@ -135,9 +135,9 @@
             // 
             this.buttonNewMedium.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.tableLayoutPanelButtons.SetColumnSpan(this.buttonNewMedium, 2);
-            this.buttonNewMedium.Location = new System.Drawing.Point(4, 324);
+            this.buttonNewMedium.Location = new System.Drawing.Point(9, 322);
             this.buttonNewMedium.Name = "buttonNewMedium";
-            this.buttonNewMedium.Size = new System.Drawing.Size(115, 23);
+            this.buttonNewMedium.Size = new System.Drawing.Size(105, 28);
             this.buttonNewMedium.TabIndex = 1;
             this.buttonNewMedium.Text = "New medium";
             this.buttonNewMedium.UseVisualStyleBackColor = true;
@@ -147,9 +147,9 @@
             // 
             this.buttonNewEasy.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.tableLayoutPanelButtons.SetColumnSpan(this.buttonNewEasy, 2);
-            this.buttonNewEasy.Location = new System.Drawing.Point(9, 278);
+            this.buttonNewEasy.Location = new System.Drawing.Point(9, 276);
             this.buttonNewEasy.Name = "buttonNewEasy";
-            this.buttonNewEasy.Size = new System.Drawing.Size(105, 23);
+            this.buttonNewEasy.Size = new System.Drawing.Size(105, 28);
             this.buttonNewEasy.TabIndex = 0;
             this.buttonNewEasy.Text = "New easy";
             this.buttonNewEasy.UseVisualStyleBackColor = true;
@@ -158,9 +158,9 @@
             // buttonRedo
             // 
             this.buttonRedo.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.buttonRedo.Location = new System.Drawing.Point(65, 511);
+            this.buttonRedo.Location = new System.Drawing.Point(65, 509);
             this.buttonRedo.Name = "buttonRedo";
-            this.buttonRedo.Size = new System.Drawing.Size(54, 23);
+            this.buttonRedo.Size = new System.Drawing.Size(54, 28);
             this.buttonRedo.TabIndex = 6;
             this.buttonRedo.Text = "->";
             this.buttonRedo.UseVisualStyleBackColor = true;

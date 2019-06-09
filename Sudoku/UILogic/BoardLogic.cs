@@ -12,7 +12,6 @@ namespace Sudoku.UILogic
     //
     // TODO:
     //  Save/restore
-    //  Winforms UI
     //  ^P for possibles?
     //  Timing?
     //

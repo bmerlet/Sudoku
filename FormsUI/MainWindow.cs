@@ -115,6 +115,41 @@ namespace FormsUI
             boardLogic.Redo.Execute();
         }
 
+        protected override bool ProcessDialogKey(Keys keyData)
+        {
+            if (keyData == (Keys.Control | Keys.C) && boardLogic.Check.CanExecute())
+            {
+                boardLogic.Check.Execute();
+                return true;
+            }
+
+            if (keyData == (Keys.Control | Keys.H) && boardLogic.Hint.CanExecute())
+            {
+                boardLogic.Hint.Execute();
+                return true;
+            }
+
+            if (keyData == (Keys.Control | Keys.Z) && boardLogic.Undo.CanExecute())
+            {
+                boardLogic.Undo.Execute();
+                return true;
+            }
+
+            if (keyData == (Keys.Control | Keys.Y) && boardLogic.Redo.CanExecute())
+            {
+                boardLogic.Redo.Execute();
+                return true;
+            }
+
+            if (boardLogic.KbdNumber.CanExecute() && keyData >= Keys.D0 && keyData <= Keys.D9)
+            {
+                int num = keyData - Keys.D0;
+                boardLogic.KbdNumber.Execute(num.ToString());
+            }
+
+            return false;
+        }
+
         #endregion
 
         #region IUIProvider implementation
