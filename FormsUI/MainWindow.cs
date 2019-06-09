@@ -62,60 +62,8 @@ namespace FormsUI
             foreach (var pos in Position.AllPositions)
             {
                 var cellLogic = boardLogic.UICells[pos.Cell];
-                var cell = new UICell(cellLogic, pos);
+                var cell = new UICell(cellLogic, boardLogic, pos);
                 tableLayoutPanelBoard.Controls.Add(cell, (int)pos.Column, (int)pos.Row);
-            }
-
-            //tableLayoutPanelBoard.CellPaint += OnCellPaint;
-            //tableLayoutPanelBoard.Paint += OnBoardPaint;
-        }
-
-        private void OnBoardPaint(object sender, PaintEventArgs e)
-        {
-            const int bigBorderWidth = 4;
-
-            var g = e.Graphics;
-            var tb = tableLayoutPanelBoard.Bounds;
-
-            g.FillRectangle(Brushes.Black, tb.Left, tb.Top, tb.Right, bigBorderWidth);
-        }
-
-        private void OnCellPaint(object sender, TableLayoutCellPaintEventArgs e)
-        {
-            const int bigBorderWidth = 4;
-            const int mediumBorderWidth = 2;
-
-            var g = e.Graphics;
-            var cb = e.CellBounds;
-
-            if (e.Row == 0)
-            {
-                g.FillRectangle(Brushes.Black, cb.Left, cb.Top, cb.Right, bigBorderWidth);
-            }
-            else if ((e.Row % Position.GRID_SIZE) == 0)
-            {
-                g.FillRectangle(Brushes.Black, cb.Left, cb.Top, cb.Right, mediumBorderWidth);
-            }
-            else if (e.Row == Position.ROW_COL_SEC_SIZE - 1)
-            {
-                g.FillRectangle(Brushes.Black, cb.Left, cb.Top + cb.Height - bigBorderWidth, cb.Right, bigBorderWidth);
-            }
-            else
-            {
-
-            }
-
-            if (e.Column == 0)
-            {
-                g.FillRectangle(Brushes.Black, cb.Left, cb.Top, bigBorderWidth, cb.Height);
-            }
-            else if ((e.Column % Position.GRID_SIZE) == 0)
-            {
-                g.FillRectangle(Brushes.Black, cb.Left, cb.Top, mediumBorderWidth, cb.Height);
-            }
-            else if (e.Column == Position.ROW_COL_SEC_SIZE - 1)
-            {
-                g.FillRectangle(Brushes.Black, cb.Left + cb.Width - bigBorderWidth, cb.Top, bigBorderWidth, cb.Height);
             }
         }
 

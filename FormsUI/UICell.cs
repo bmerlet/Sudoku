@@ -16,11 +16,13 @@ namespace FormsUI
     public partial class UICell : UserControl
     {
         private readonly UICellLogic logic;
+        private readonly BoardLogic boardLogic;
         private readonly Position position;
 
-        public UICell(UICellLogic logic, Position position)
+        public UICell(UICellLogic logic, BoardLogic boardLogic, Position position)
         {
             this.logic = logic;
+            this.boardLogic = boardLogic;
             this.position = position;
 
             InitializeComponent();
@@ -33,9 +35,39 @@ namespace FormsUI
             labelPossibles.ForeColor = (Color)logic.PossiblesForeground;
             labelPossibles.Text = logic.Possibles;
 
+            // Draw borders
             tableLayoutPanelBorders.CellPaint += OnCellPaint;
+
             // Listen to logic changes
             logic.PropertyChanged += OnPropertyChanged;
+
+            // Listen to mouse clicks
+            panelCell.MouseDown += OnMouseDown;
+        }
+
+        private void OnMouseDown(object sender, MouseEventArgs e)
+        {
+            bool showContextMenu = false;
+
+            if (e.Button == MouseButtons.Left)
+            {
+                showContextMenu = boardLogic.OnMouseLeft(position.Row, position.Column);
+            }
+            else if (e.Button == MouseButtons.Right)
+            {
+                showContextMenu = boardLogic.OnMouseRight(position.Row, position.Column);
+            }
+
+            if (showContextMenu)
+            {
+                var numberPicker = new NumberPicker(boardLogic);
+                var contextMenuStrip = new FreeContextMenuStrip(numberPicker);
+                numberPicker.ParentContextMenuStrip = contextMenuStrip;
+                var point = Cursor.Position;
+                point.X += 10;
+                point.Y += 10;
+                contextMenuStrip.Show(point);
+            }
         }
 
         private void OnCellPaint(object sender, TableLayoutCellPaintEventArgs e)

@@ -50,6 +50,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FreeContextMenuStrip.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="MainWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -64,8 +67,17 @@
     <Compile Include="UICell.Designer.cs">
       <DependentUpon>UICell.cs</DependentUpon>
     </Compile>
+    <Compile Include="NumberPicker.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="NumberPicker.Designer.cs">
+      <DependentUpon>NumberPicker.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="MainWindow.resx">
       <DependentUpon>MainWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NumberPicker.resx">
+      <DependentUpon>NumberPicker.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

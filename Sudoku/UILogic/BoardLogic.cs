@@ -167,6 +167,7 @@ namespace Sudoku.UILogic
                 if (pos != null)
                 {
                     SelectCell(pos.Cell);
+                    showingPicker = false;
                 }
             }
         }
