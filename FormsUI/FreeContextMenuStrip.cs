@@ -11,7 +11,7 @@ namespace FormsUI
     /// <summary>
     /// Trick the context menu strip into displaying something that is not a menu.
     /// </summary>
-    class FreeContextMenuStrip : ContextMenuStrip
+    public class FreeContextMenuStrip : ContextMenuStrip
     {
         private readonly Control content;
         private readonly Padding NullPadding = new Padding(0, 0, 0, 0);

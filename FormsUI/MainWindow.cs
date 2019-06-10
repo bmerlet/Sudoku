@@ -19,6 +19,7 @@ namespace FormsUI
 
         private readonly MainWindowLogic logic;
         private readonly BoardLogic boardLogic;
+        private readonly FreeContextMenuStrip contextMenu;
 
         #endregion
 
@@ -32,6 +33,14 @@ namespace FormsUI
 
             // Crete winforms widgets
             InitializeComponent();
+
+            // Build context menu
+            var numberPicker = new NumberPicker(boardLogic);
+            contextMenu = new FreeContextMenuStrip(numberPicker);
+            numberPicker.ParentContextMenuStrip = contextMenu;
+
+            // Regain focus when context menu goes away
+            contextMenu.Closed += (e, s) => Focus();
 
             // Create the cells
             CreateCells();
@@ -62,7 +71,7 @@ namespace FormsUI
             foreach (var pos in Position.AllPositions)
             {
                 var cellLogic = boardLogic.UICells[pos.Cell];
-                var cell = new UICell(cellLogic, boardLogic, pos);
+                var cell = new UICell(cellLogic, boardLogic, contextMenu, pos);
                 tableLayoutPanelBoard.Controls.Add(cell, (int)pos.Column, (int)pos.Row);
             }
         }

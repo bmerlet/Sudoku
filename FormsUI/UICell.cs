@@ -18,11 +18,13 @@ namespace FormsUI
         private readonly UICellLogic logic;
         private readonly BoardLogic boardLogic;
         private readonly Position position;
+        private readonly FreeContextMenuStrip contextMenu;
 
-        public UICell(UICellLogic logic, BoardLogic boardLogic, Position position)
+        public UICell(UICellLogic logic, BoardLogic boardLogic, FreeContextMenuStrip contextMenu, Position position)
         {
             this.logic = logic;
             this.boardLogic = boardLogic;
+            this.contextMenu = contextMenu;
             this.position = position;
 
             InitializeComponent();
@@ -61,13 +63,10 @@ namespace FormsUI
 
             if (showContextMenu)
             {
-                var numberPicker = new NumberPicker(boardLogic);
-                var contextMenuStrip = new FreeContextMenuStrip(numberPicker);
-                numberPicker.ParentContextMenuStrip = contextMenuStrip;
                 var point = Cursor.Position;
                 point.X += 10;
                 point.Y += 10;
-                contextMenuStrip.Show(point);
+                contextMenu.Show(point);
             }
         }
 
