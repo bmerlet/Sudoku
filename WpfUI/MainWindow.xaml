@@ -9,40 +9,50 @@
 
     <!-- Key bindings -->
     <Window.InputBindings >
-        <KeyBinding Key="N" Modifiers="Ctrl"  Command="{Binding NewEasy}"/>
-        <KeyBinding Key="F2"                  Command="{Binding NewEasy}"/>
-        <KeyBinding Key="Y" Modifiers="Ctrl"  Command="{Binding BoardLogic.Redo}"/>
-        <KeyBinding Key="Z" Modifiers="Ctrl"  Command="{Binding BoardLogic.Undo}"/>
-        <KeyBinding Key="C" Modifiers="Ctrl"  Command="{Binding BoardLogic.Check}"/>
-        <KeyBinding Key="H" Modifiers="Ctrl"  Command="{Binding BoardLogic.Hint}"/>
-        <KeyBinding Key="D0"                  Command="{Binding BoardLogic.KbdNumber}" CommandParameter="0"/>
-        <KeyBinding Key="D1"                  Command="{Binding BoardLogic.KbdNumber}" CommandParameter="1"/>
-        <KeyBinding Key="D2"                  Command="{Binding BoardLogic.KbdNumber}" CommandParameter="2"/>
-        <KeyBinding Key="D3"                  Command="{Binding BoardLogic.KbdNumber}" CommandParameter="3"/>
-        <KeyBinding Key="D4"                  Command="{Binding BoardLogic.KbdNumber}" CommandParameter="4"/>
-        <KeyBinding Key="D5"                  Command="{Binding BoardLogic.KbdNumber}" CommandParameter="5"/>
-        <KeyBinding Key="D6"                  Command="{Binding BoardLogic.KbdNumber}" CommandParameter="6"/>
-        <KeyBinding Key="D7"                  Command="{Binding BoardLogic.KbdNumber}" CommandParameter="7"/>
-        <KeyBinding Key="D8"                  Command="{Binding BoardLogic.KbdNumber}" CommandParameter="8"/>
-        <KeyBinding Key="D9"                  Command="{Binding BoardLogic.KbdNumber}" CommandParameter="9"/>
-        <KeyBinding Key="NumPad0"             Command="{Binding BoardLogic.KbdNumber}" CommandParameter="0"/>
-        <KeyBinding Key="NumPad1"             Command="{Binding BoardLogic.KbdNumber}" CommandParameter="1"/>
-        <KeyBinding Key="NumPad2"             Command="{Binding BoardLogic.KbdNumber}" CommandParameter="2"/>
-        <KeyBinding Key="NumPad3"             Command="{Binding BoardLogic.KbdNumber}" CommandParameter="3"/>
-        <KeyBinding Key="NumPad4"             Command="{Binding BoardLogic.KbdNumber}" CommandParameter="4"/>
-        <KeyBinding Key="NumPad5"             Command="{Binding BoardLogic.KbdNumber}" CommandParameter="5"/>
-        <KeyBinding Key="NumPad6"             Command="{Binding BoardLogic.KbdNumber}" CommandParameter="6"/>
-        <KeyBinding Key="NumPad7"             Command="{Binding BoardLogic.KbdNumber}" CommandParameter="7"/>
-        <KeyBinding Key="NumPad8"             Command="{Binding BoardLogic.KbdNumber}" CommandParameter="8"/>
-        <KeyBinding Key="NumPad9"             Command="{Binding BoardLogic.KbdNumber}" CommandParameter="9"/>
-        <KeyBinding Key="Right"               Command="{Binding BoardLogic.MoveRight}"/>
-        <KeyBinding Key="L"                   Command="{Binding BoardLogic.MoveRight}"/>
-        <KeyBinding Key="Left"                Command="{Binding BoardLogic.MoveLeft}"/>
-        <KeyBinding Key="J"                   Command="{Binding BoardLogic.MoveLeft}"/>
-        <KeyBinding Key="Up"                  Command="{Binding BoardLogic.MoveUp}"/>
-        <KeyBinding Key="I"                   Command="{Binding BoardLogic.MoveUp}"/>
-        <KeyBinding Key="Down"                Command="{Binding BoardLogic.MoveDown}"/>
-        <KeyBinding Key="K"                   Command="{Binding BoardLogic.MoveDown}"/>
+        <KeyBinding Key="N" Modifiers="Ctrl"   Command="{Binding NewEasy}"/>
+        <KeyBinding Key="F2"                   Command="{Binding NewEasy}"/>
+        <KeyBinding Key="Y" Modifiers="Ctrl"   Command="{Binding BoardLogic.Redo}"/>
+        <KeyBinding Key="Z" Modifiers="Ctrl"   Command="{Binding BoardLogic.Undo}"/>
+        <KeyBinding Key="C" Modifiers="Ctrl"   Command="{Binding BoardLogic.Check}"/>
+        <KeyBinding Key="H" Modifiers="Ctrl"   Command="{Binding BoardLogic.Hint}"/>
+        <KeyBinding Key="D0"                   Command="{Binding BoardLogic.KbdNumber}" CommandParameter="0"/>
+        <KeyBinding Key="D1"                   Command="{Binding BoardLogic.KbdNumber}" CommandParameter="1"/>
+        <KeyBinding Key="D2"                   Command="{Binding BoardLogic.KbdNumber}" CommandParameter="2"/>
+        <KeyBinding Key="D3"                   Command="{Binding BoardLogic.KbdNumber}" CommandParameter="3"/>
+        <KeyBinding Key="D4"                   Command="{Binding BoardLogic.KbdNumber}" CommandParameter="4"/>
+        <KeyBinding Key="D5"                   Command="{Binding BoardLogic.KbdNumber}" CommandParameter="5"/>
+        <KeyBinding Key="D6"                   Command="{Binding BoardLogic.KbdNumber}" CommandParameter="6"/>
+        <KeyBinding Key="D7"                   Command="{Binding BoardLogic.KbdNumber}" CommandParameter="7"/>
+        <KeyBinding Key="D8"                   Command="{Binding BoardLogic.KbdNumber}" CommandParameter="8"/>
+        <KeyBinding Key="D9"                   Command="{Binding BoardLogic.KbdNumber}" CommandParameter="9"/>
+        <KeyBinding Key="D0"  Modifiers="Ctrl" Command="{Binding BoardLogic.KbdPossible}" CommandParameter="0"/>
+        <KeyBinding Key="D1"  Modifiers="Ctrl" Command="{Binding BoardLogic.KbdPossible}" CommandParameter="1"/>
+        <KeyBinding Key="D2"  Modifiers="Ctrl" Command="{Binding BoardLogic.KbdPossible}" CommandParameter="2"/>
+        <KeyBinding Key="D3"  Modifiers="Ctrl" Command="{Binding BoardLogic.KbdPossible}" CommandParameter="3"/>
+        <KeyBinding Key="D4"  Modifiers="Ctrl" Command="{Binding BoardLogic.KbdPossible}" CommandParameter="4"/>
+        <KeyBinding Key="D5"  Modifiers="Ctrl" Command="{Binding BoardLogic.KbdPossible}" CommandParameter="5"/>
+        <KeyBinding Key="D6"  Modifiers="Ctrl" Command="{Binding BoardLogic.KbdPossible}" CommandParameter="6"/>
+        <KeyBinding Key="D7"  Modifiers="Ctrl" Command="{Binding BoardLogic.KbdPossible}" CommandParameter="7"/>
+        <KeyBinding Key="D8"  Modifiers="Ctrl" Command="{Binding BoardLogic.KbdPossible}" CommandParameter="8"/>
+        <KeyBinding Key="D9"  Modifiers="Ctrl" Command="{Binding BoardLogic.KbdPossible}" CommandParameter="9"/>
+        <KeyBinding Key="NumPad0"              Command="{Binding BoardLogic.KbdNumber}" CommandParameter="0"/>
+        <KeyBinding Key="NumPad1"              Command="{Binding BoardLogic.KbdNumber}" CommandParameter="1"/>
+        <KeyBinding Key="NumPad2"              Command="{Binding BoardLogic.KbdNumber}" CommandParameter="2"/>
+        <KeyBinding Key="NumPad3"              Command="{Binding BoardLogic.KbdNumber}" CommandParameter="3"/>
+        <KeyBinding Key="NumPad4"              Command="{Binding BoardLogic.KbdNumber}" CommandParameter="4"/>
+        <KeyBinding Key="NumPad5"              Command="{Binding BoardLogic.KbdNumber}" CommandParameter="5"/>
+        <KeyBinding Key="NumPad6"              Command="{Binding BoardLogic.KbdNumber}" CommandParameter="6"/>
+        <KeyBinding Key="NumPad7"              Command="{Binding BoardLogic.KbdNumber}" CommandParameter="7"/>
+        <KeyBinding Key="NumPad8"              Command="{Binding BoardLogic.KbdNumber}" CommandParameter="8"/>
+        <KeyBinding Key="NumPad9"              Command="{Binding BoardLogic.KbdNumber}" CommandParameter="9"/>
+        <KeyBinding Key="Right"                Command="{Binding BoardLogic.MoveRight}"/>
+        <KeyBinding Key="L"                    Command="{Binding BoardLogic.MoveRight}"/>
+        <KeyBinding Key="Left"                 Command="{Binding BoardLogic.MoveLeft}"/>
+        <KeyBinding Key="J"                    Command="{Binding BoardLogic.MoveLeft}"/>
+        <KeyBinding Key="Up"                   Command="{Binding BoardLogic.MoveUp}"/>
+        <KeyBinding Key="I"                    Command="{Binding BoardLogic.MoveUp}"/>
+        <KeyBinding Key="Down"                 Command="{Binding BoardLogic.MoveDown}"/>
+        <KeyBinding Key="K"                    Command="{Binding BoardLogic.MoveDown}"/>
     </Window.InputBindings>
     <Window.Resources>
         <ResourceDictionary>

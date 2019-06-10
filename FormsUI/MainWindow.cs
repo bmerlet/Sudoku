@@ -145,26 +145,38 @@ namespace FormsUI
             {
                 int num = keyData - Keys.D0;
                 boardLogic.KbdNumber.Execute(num.ToString());
+                return true;
+            }
+
+            if (boardLogic.KbdNumber.CanExecute() && keyData >= (Keys.D0 | Keys.Control) && keyData <= (Keys.D9 | Keys.Control))
+            {
+                int num = keyData - (Keys.D0 | Keys.Control);
+                boardLogic.KbdPossible.Execute(num.ToString());
+                return true;
             }
 
             if (keyData == Keys.Right || keyData == Keys.L)
             {
                 boardLogic.MoveRight.Execute();
+                return true;
             }
 
             if (keyData == Keys.Left || keyData == Keys.J)
             {
                 boardLogic.MoveLeft.Execute();
+                return true;
             }
 
             if (keyData == Keys.Up || keyData == Keys.I)
             {
                 boardLogic.MoveUp.Execute();
+                return true;
             }
 
             if (keyData == Keys.Down || keyData == Keys.K)
             {
                 boardLogic.MoveDown.Execute();
+                return true;
             }
 
             return false;

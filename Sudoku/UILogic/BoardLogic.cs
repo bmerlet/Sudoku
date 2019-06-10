@@ -36,6 +36,7 @@ namespace Sudoku.UILogic
 
         // Currently selected cell
         private uint selectedCell = uint.MaxValue;
+        private uint lastSelectedCell = uint.MaxValue;
 
         // If we are picking numbers or possibles
         private bool pickPossibilities;
@@ -59,6 +60,7 @@ namespace Sudoku.UILogic
             Check = new CommandBase(OnCheck, false);
             Hint = new CommandBase(OnHint, false);
             KbdNumber = new CommandBase(OnKbdNumber, true);
+            KbdPossible = new CommandBase(OnKbdPossible, true);
             MoveRight = new CommandBase(OnMoveRight, true);
             MoveLeft = new CommandBase(OnMoveLeft, true);
             MoveUp = new CommandBase(OnMoveUp, true);
@@ -97,6 +99,7 @@ namespace Sudoku.UILogic
 
         // User typed a number
         public CommandBase KbdNumber { get; private set; }
+        public CommandBase KbdPossible { get; private set; }
 
         // User pressed an arrow key
         public CommandBase MoveRight { get; private set; }
@@ -141,6 +144,7 @@ namespace Sudoku.UILogic
             }
 
             selectedCell = uint.MaxValue;
+            lastSelectedCell = uint.MaxValue;
             logEntries.Clear();
             Undo.SetCanExecute(false);
             Redo.SetCanExecute(false);
@@ -240,8 +244,19 @@ namespace Sudoku.UILogic
         //
         public void OnKbdNumber(object arg)
         {
+            OnKbdNumberOrPossible(arg, false);
+        }
+
+        public void OnKbdPossible(object arg)
+        {
+            OnKbdNumberOrPossible(arg, true);
+        }
+
+        private void OnKbdNumberOrPossible(object arg, bool possible)
+        {
             if (puzzle != null && selectedCell != uint.MaxValue && arg is string numString)
             {
+                pickPossibilities = possible;
                 OnSetNumber(uint.Parse(numString));
             }
         }
@@ -291,7 +306,17 @@ namespace Sudoku.UILogic
 
         private Position GetSelectedPosition()
         {
-            return selectedCell == uint.MaxValue ? Position.GetCellFromCell(Position.BOARD_SIZE / 2) : Position.GetCellFromCell(selectedCell);
+            uint cell = selectedCell;
+            if (cell == uint.MaxValue)
+            {
+                cell = lastSelectedCell;
+            }
+            if (cell == uint.MaxValue)
+            {
+                cell = Position.BOARD_SIZE / 2;
+            }
+
+            return Position.GetCellFromCell(cell);
         }
 
         //
@@ -333,6 +358,7 @@ namespace Sudoku.UILogic
 
                     // Unselect the cell
                     cell.SetSelected(false);
+                    lastSelectedCell = selectedCell;
                     selectedCell = uint.MaxValue;
 
                     // close context menu
@@ -510,6 +536,7 @@ namespace Sudoku.UILogic
             if (selectedCell != uint.MaxValue && selectedCell != pos)
             {
                 // Unselect previously selected cell
+                lastSelectedCell = selectedCell;
                 UICells[selectedCell].SetSelected(false);
             }
 
