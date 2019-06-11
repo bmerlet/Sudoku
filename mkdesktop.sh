@@ -7,7 +7,7 @@ cd "$(dirname "$0")"
 here=`pwd`
 programdir=$here/FormsUI/bin/Debug
 program=$programdir/FormsUI.exe
-icon=$here/FormsUI/Properties/Sudoku.ico
+icon=$here/FormsUI/Properties/sudoku.ico
 
 # desktop file name
 desktop=~/.local/share/applications/Sudoku.desktop
