@@ -15,10 +15,12 @@ namespace Sudoku.UILogic
         {
             BoardLogic = new BoardLogic(uiProvider);
 
-            NewEasy = new CommandBase(() => BoardLogic.OnGeneratePuzzle(EDifficulty.SIMPLE));
-            NewMedium = new CommandBase(() => BoardLogic.OnGeneratePuzzle(EDifficulty.EASY));
-            NewHard = new CommandBase(() => BoardLogic.OnGeneratePuzzle(EDifficulty.INTERMEDIATE));
-            NewVeryHard = new CommandBase(() => BoardLogic.OnGeneratePuzzle(EDifficulty.EXPERT));
+            NewEasy = new CommandBase(() => OnGeneratePuzzle(EDifficulty.SIMPLE));
+            NewMedium = new CommandBase(() => OnGeneratePuzzle(EDifficulty.EASY));
+            NewHard = new CommandBase(() => OnGeneratePuzzle(EDifficulty.INTERMEDIATE));
+            NewVeryHard = new CommandBase(() => OnGeneratePuzzle(EDifficulty.EXPERT));
+
+            BoardLogic.PuzzleSolved += (s, e) => OnPuzzleSolved();
         }
 
         public CommandBase NewEasy { get; }
@@ -30,6 +32,26 @@ namespace Sudoku.UILogic
 
         public void OnLoaded()
         {
+        }
+
+        private void OnGeneratePuzzle(EDifficulty difficulty)
+        {
+            if (NewEasy.CanExecute())
+            {
+                BoardLogic.OnGeneratePuzzle(difficulty);
+                NewEasy.SetCanExecute(false);
+                NewMedium.SetCanExecute(false);
+                NewHard.SetCanExecute(false);
+                NewVeryHard.SetCanExecute(false);
+            }
+        }
+
+        private void OnPuzzleSolved()
+        {
+            NewEasy.SetCanExecute(true);
+            NewMedium.SetCanExecute(true);
+            NewHard.SetCanExecute(true);
+            NewVeryHard.SetCanExecute(true);
         }
     }
 }
