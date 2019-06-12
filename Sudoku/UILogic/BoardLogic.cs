@@ -326,7 +326,9 @@ namespace Sudoku.UILogic
         {
             bool keepContextMenuOpen = false;
 
-            if (puzzle != null && selectedCell != uint.MaxValue)
+            if (puzzle != null &&
+                selectedCell != uint.MaxValue &&
+                puzzle.Cells[selectedCell] == 0)
             {
                 var cell = UICells[selectedCell];
                 uint position = selectedCell;
