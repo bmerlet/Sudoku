@@ -5,17 +5,17 @@ using System.Xml.Serialization;
 
 namespace Sudoku.UILogic
 {
-    static public class SettingsManager
+    public class SettingsManager
     {
-        static private string fileName;
+        private readonly string fileName;
 
-        static public void Save(object settings)
+        public SettingsManager(string company, string product)
         {
-            if (fileName == null)
-            {
-                fileName = GetFileName();
-            }
+            fileName = GetFileName(company, product);
+        }
 
+        public void Save(object settings)
+        {
             var serializer = new XmlSerializer(settings.GetType());
             using (var fileStream = new FileStream(fileName, FileMode.Create))
             {
@@ -23,56 +23,33 @@ namespace Sudoku.UILogic
             }
         }
 
-        static public object Load(object settings)
+        public T Load<T>() where T : class
         {
-            if (fileName == null)
-            {
-                fileName = GetFileName();
-            }
+            T settings = default(T);
 
-            var serializer = new XmlSerializer(settings.GetType());
+            var serializer = new XmlSerializer(typeof(T));
             try
             {
                 using (var fileStream = new FileStream(fileName, FileMode.Open))
                 {
-                    settings = serializer.Deserialize(fileStream);
+                    settings = serializer.Deserialize(fileStream) as T;
                 }
             }
             catch (FileNotFoundException)
             {
-                settings = null;
             }
 
             return settings;
         }
 
-        static private string GetFileName()
+        private string GetFileName(string company, string product)
         {
             // Base path
             string root = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
 
-            // Find assembly
-            Assembly assembly = Assembly.GetEntryAssembly();
-            if (assembly == null)
-            {
-                assembly = Assembly.GetCallingAssembly();
-            }
-
-            // Find company name
-            string companyName = "NoCompany";
-            AssemblyCompanyAttribute[] attrs = (AssemblyCompanyAttribute[])assembly.GetCustomAttributes(typeof(AssemblyCompanyAttribute), true);
-
-            if ((attrs != null) && attrs.Length > 0 && attrs[0].Company.Length > 0)
-            {
-                companyName = attrs[0].Company;
-            }
-
-            // Find product name
-            string productName = AppDomain.CurrentDomain.FriendlyName;
-
             // Make filename
-            string filename = Path.Combine(root, companyName);
-            filename = Path.Combine(filename, productName);
+            string filename = Path.Combine(root, company);
+            filename = Path.Combine(filename, product);
 
             Directory.CreateDirectory(filename);
 

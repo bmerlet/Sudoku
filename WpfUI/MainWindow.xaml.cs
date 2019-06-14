@@ -30,11 +30,30 @@ namespace WpfUI
 
             InitializeComponent();
 
-            Loaded += (s, e) => logic.OnLoaded();
+            Loaded += (s, e) => OnLoaded();
             board.MouseDown += OnMouseDown;
 
             logic.BoardLogic.PuzzleSolved += OnPuzzleSolved;
 
+        }
+
+        private void OnLoaded()
+        {
+            var settings = logic.SettingsManager.Load<Settings>();
+            if (settings != null)
+            {
+                this.Left = settings.Left;
+                this.Top = settings.Top;
+            }
+        }
+
+        private void SaveSettings()
+        {
+            var settings = new Settings();
+            settings.Left = (int)Left;
+            settings.Top = (int)Top;
+
+            logic.SettingsManager.Save(settings);
         }
 
         private void OnPuzzleSolved(object sender, EventArgs e)

@@ -14,6 +14,7 @@ namespace Sudoku.UILogic
         public MainWindowLogic(IUIProvider uiProvider)
         {
             BoardLogic = new BoardLogic(uiProvider);
+            SettingsManager = new SettingsManager("Sarabande, Inc.", "Sudoku");
 
             NewEasy = new CommandBase(() => OnGeneratePuzzle(EDifficulty.SIMPLE));
             NewMedium = new CommandBase(() => OnGeneratePuzzle(EDifficulty.EASY));
@@ -29,10 +30,7 @@ namespace Sudoku.UILogic
         public CommandBase NewVeryHard { get; }
 
         public BoardLogic BoardLogic { get; }
-
-        public void OnLoaded()
-        {
-        }
+        public SettingsManager SettingsManager { get; }
 
         private void OnGeneratePuzzle(EDifficulty difficulty)
         {

@@ -88,7 +88,7 @@ namespace FormsUI
 
         private void OnBoardLogicPuzzleSolved(object sender, EventArgs e)
         {
-            MessageBox.Show("Congratulations, game won!");
+            BeginInvoke((Action)(() => MessageBox.Show("Congratulations, game won!")));
         }
 
         #endregion
@@ -212,8 +212,7 @@ namespace FormsUI
 
         private void LoadSettings()
         {
-            var settings = new Settings();
-            settings = SettingsManager.Load(settings) as Settings;
+            var settings = logic.SettingsManager.Load<Settings>();
             if (settings != null)
             {
                 DesktopLocation = new Point(settings.Left, settings.Top);
@@ -226,7 +225,7 @@ namespace FormsUI
             settings.Left = DesktopLocation.X;
             settings.Top = DesktopLocation.Y;
 
-            SettingsManager.Save(settings);
+            logic.SettingsManager.Save(settings);
         }
 
         #endregion
