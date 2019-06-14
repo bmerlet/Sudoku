@@ -31,8 +31,14 @@ namespace FormsUI
             logic = new MainWindowLogic(this);
             boardLogic = logic.BoardLogic;
 
-            // Crete winforms widgets
+            // Create winforms widgets
             InitializeComponent();
+
+            // Get settings
+            Load += (s, e) => LoadSettings();
+
+            // Save settings on closing
+            Closing += (s, e) => SaveSettings();
 
             // Build context menu
             var numberPicker = new NumberPicker(boardLogic);
@@ -202,6 +208,25 @@ namespace FormsUI
             }
 
             return false;
+        }
+
+        private void LoadSettings()
+        {
+            var settings = new Settings();
+            settings = SettingsManager.Load(settings) as Settings;
+            if (settings != null)
+            {
+                DesktopLocation = new Point(settings.Left, settings.Top);
+            }
+        }
+
+        private void SaveSettings()
+        {
+            var settings = new Settings();
+            settings.Left = DesktopLocation.X;
+            settings.Top = DesktopLocation.Y;
+
+            SettingsManager.Save(settings);
         }
 
         #endregion
