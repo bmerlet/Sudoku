@@ -61,7 +61,6 @@
     <Compile Include="UILogic\LogEntry.cs" />
     <Compile Include="UILogic\MainWindowLogic.cs" />
     <Compile Include="UILogic\UICellLogic.cs" />
-    <Compile Include="UILogic\SettingsManager.cs" />
     <Compile Include="UILogic\Settings.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
