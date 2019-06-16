@@ -40,7 +40,7 @@ namespace WpfUI
 
         private void LoadSettings()
         {
-            var settings = logic.SettingsManager.Load<Settings>();
+            var settings = logic.SettingsManager.Load();
             if (settings != null)
             {
                 this.Left = settings.Left;

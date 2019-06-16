@@ -212,7 +212,7 @@ namespace FormsUI
 
         private void LoadSettings()
         {
-            var settings = logic.SettingsManager.Load<Settings>();
+            var settings = logic.SettingsManager.Load();
             if (settings != null)
             {
                 DesktopLocation = new Point(settings.Left, settings.Top);
