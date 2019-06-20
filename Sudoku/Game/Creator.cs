@@ -13,6 +13,7 @@ namespace Sudoku.Game
         public Puzzle GeneratePuzzle(EDifficulty difficulty)
         {
             Puzzle puzzle = null;
+            //Severity = ESev.Interesting;
 
             if (difficulty == EDifficulty.UNKNOWN)
             {
@@ -24,12 +25,12 @@ namespace Sudoku.Game
                 puzzle = GeneratePuzzle(difficulty, ESymmetry.RANDOM);
                 if (puzzle.Statistics.Difficulty == difficulty)
                 {
-                    Console.WriteLine($"Got puzzle after {retry} tries:");
-                    Console.WriteLine(Print(puzzle, EPrintStyle.READABLE));
+                    Trace(ESev.Important, $"Got puzzle after {retry + 1} tries:");
+                    Trace(ESev.Important, Print(puzzle, EPrintStyle.READABLE));
                     break;
                 }
 
-                Console.WriteLine($"Got puzzle of difficulty {puzzle.Statistics.Difficulty} on try {retry} - retrying");
+                Trace(ESev.Important, $"Got puzzle of difficulty {puzzle.Statistics.Difficulty} on try {retry} - retrying");
             }
 
             return puzzle;
@@ -67,11 +68,8 @@ namespace Sudoku.Game
 
             var solveTime = TrackTiming ? stopwatch.Elapsed : TimeSpan.MinValue;
 
-            if (Verbose)
-            {
-                Console.WriteLine("Solved puzzle:");
-                Console.WriteLine(Print(puzzle, EPrintStyle.READABLE));
-            }
+            Trace(ESev.Important, "Solved puzzle:");
+            Trace(ESev.Important, Print(puzzle, EPrintStyle.READABLE));
 
             // Optimization: When not using symmetry to unmark multiple cells,
             // unmark all the cells that were found through logic instead of guessed
@@ -104,35 +102,32 @@ namespace Sudoku.Game
                 positions.Add(randomizer[posInOrder]);
 
                 // Add whatever the symmetry requires
-                if (puzzle.Cells[positions[0].Cell] == 0)
+                switch(symmetry)
                 {
-                    switch(symmetry)
-                    {
-                        case ESymmetry.ROTATE90:
-                            positions.Add(positions[0].Opposite);
-                            positions.Add(positions[0].VerticalFlip);
-                            positions.Add(positions[0].HorizontalFlip);
-                            break;
+                    case ESymmetry.ROTATE90:
+                        positions.Add(positions[0].Opposite);
+                        positions.Add(positions[0].VerticalFlip);
+                        positions.Add(positions[0].HorizontalFlip);
+                        break;
 
-                        case ESymmetry.ROTATE180:
-                            positions.Add(positions[0].Opposite);
-                            break;
+                    case ESymmetry.ROTATE180:
+                        positions.Add(positions[0].Opposite);
+                        break;
 
-                        case ESymmetry.FLIP:
-                            positions.Add(positions[0].VerticalFlip);
-                            break;
+                    case ESymmetry.FLIP:
+                        positions.Add(positions[0].VerticalFlip);
+                        break;
 
-                        case ESymmetry.MIRROR:
-                            positions.Add(positions[0].HorizontalFlip);
-                            break;
-                    }
+                    case ESymmetry.MIRROR:
+                        positions.Add(positions[0].HorizontalFlip);
+                        break;
                 }
 
                 // Save the values and remove them from the puzzle
                 foreach(var pos in positions)
                 {
-                    savedCells.Add(puzzle.Cells[pos.Cell]);
-                    puzzle.Cells[pos.Cell] = 0;
+                    savedCells.Add(puzzle.Givens[pos.Cell]);
+                    puzzle.Givens[pos.Cell] = 0;
                 }
 
                 // See if we can solve in one
@@ -142,25 +137,27 @@ namespace Sudoku.Game
                 {
                     // Nope, put the values back
                     putValuesBack = true;
+                    Trace(ESev.Interesting, $"Put back {savedCells.Count} values");
                 }
                 else if (difficulty != EDifficulty.UNKNOWN)
                 {
-                    Console.Write($"Desired difficulty {difficulty}, after hollowing out: {tmpSolvedPuzzle.Statistics.Difficulty} pos {posInOrder}");
+                    Trace(ESev.Interesting, $"Desired difficulty {difficulty}, after hollowing out: {tmpSolvedPuzzle.Statistics.Difficulty} pos {posInOrder}");
+
                     // See if we made the puzzle too difficult
                     if (tmpSolvedPuzzle.Statistics.Difficulty > difficulty)
                     {
                         // Yes, put the values back
                         putValuesBack = true;
-                        Console.Write(" - putting values back");
+                        Trace(ESev.Interesting, "Put back {savedCells.Count} values");
                     }
-                    Console.WriteLine();
                 }
 
                 if (putValuesBack)
                 {
-                    for (int p = 0; p < positions.Count; p++)
+                    // put back in reverse order, as some cells may be identical
+                    for (int p = positions.Count - 1; p >= 0 ; p--)
                     {
-                        puzzle.Cells[positions[p].Cell] = savedCells[p];
+                        puzzle.Givens[positions[p].Cell] = savedCells[p];
                     }
                 }
                 else
@@ -185,11 +182,8 @@ namespace Sudoku.Game
                 Console.WriteLine($"Solve time: {solveTime.Milliseconds}ms, Hollow out time: {hollowOutTime.Milliseconds}ms, stat time: {statsTime.Milliseconds}, symmetry {symmetry}, difficulty {solvedPuzzle.Statistics.Difficulty}");
             }
 
-            if (Verbose)
-            {
-                Console.WriteLine("Final puzzle:");
-                Console.WriteLine(Print(puzzle, EPrintStyle.READABLE));
-            }
+            Trace(ESev.Important, "Final puzzle:");
+            Trace(ESev.Important, Print(puzzle, EPrintStyle.READABLE));
 
             // Update stats
             puzzle = new Puzzle(puzzle, solvedPuzzle.Statistics);

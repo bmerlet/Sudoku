@@ -19,9 +19,20 @@ namespace Sudoku.Game
 
         #region Debug properties
 
-        public bool Verbose { get; set; }
         public bool TrackTiming { get; set; }
         protected bool LogDecisions;
+
+        public enum ESev { Critical, Important, Interesting, Babble }
+        public ESev Severity { get; set; } = ESev.Critical;
+
+        protected void Trace(ESev severity, string msg)
+        {
+            if (severity <= Severity)
+            {
+                Console.WriteLine(msg);
+            }
+        }
+
 
         #endregion
 
@@ -102,7 +113,7 @@ namespace Sudoku.Game
             // Copy the puzzle into "solution"
             foreach (var pos in Position.AllPositions)
             {
-                uint val = puzzle.Cells[pos.Cell];
+                uint val = puzzle.Givens[pos.Cell];
                 if (val != 0)
                 {
                     if (!solution[pos].IsPossible(val))
@@ -259,11 +270,8 @@ namespace Sudoku.Game
                     // Look for unmarked cells with no possibilities left
                     if (!solution[pos].IsMarked && solution[pos].CountPossibilities() == 0)
                     {
-                        if (Verbose)
-                        {
-                            Console.WriteLine("Impossible at pos " + pos.ToString());
-                            Console.Write(Print(solution, EPrintStyle.READABLE));
-                        }
+                        Trace(ESev.Interesting, "Impossible at pos " + pos.ToString());
+                        Trace(ESev.Interesting, Print(solution, EPrintStyle.READABLE));
                         return true;
                     }
                 }
@@ -1092,7 +1100,7 @@ namespace Sudoku.Game
 
         private void Log(uint round, EMarkType type, Position position = null, uint value = uint.MaxValue)
         {
-            if (LogDecisions || Verbose)
+            if (LogDecisions || Severity == ESev.Babble)
             {
                 var logEntry = new LogEntry(round, type, position, value);
 
@@ -1101,10 +1109,7 @@ namespace Sudoku.Game
                     logEntries.Add(logEntry);
                 }
 
-                if (Verbose)
-                {
-                    Console.WriteLine(logEntry);
-                }
+                Trace(ESev.Babble, logEntry.ToString());
             }
         }
 
@@ -1112,10 +1117,7 @@ namespace Sudoku.Game
         {
             if (solution[position].SetImpossible(value, round))
             {
-                if (Verbose)
-                {
-                    Console.WriteLine($"Round {round}: Set value {value} impossible for {position}");
-                }
+                Trace(ESev.Babble, $"Round {round}: Set value {value} impossible for {position}");
 
                 return true;
             }
@@ -1171,7 +1173,6 @@ namespace Sudoku.Game
 
             return str;
         }
-
 
         #endregion
 

@@ -25,9 +25,6 @@ namespace Sudoku.UILogic
         // The initial puzzle
         private Puzzle puzzle;
 
-        // The solution
-        private Puzzle solution;
-
         // The puzzle, as currently completed by the user
         private Puzzle userSolution;
 
@@ -116,9 +113,7 @@ namespace Sudoku.UILogic
         //
         public void OnGeneratePuzzle(EDifficulty difficulty)
         {
-            creator.Verbose = false;
             puzzle = creator.GeneratePuzzle(difficulty);
-            solution = creator.Solve(puzzle, true);
 
             Check.SetCanExecute(true);
             Hint.SetCanExecute(true);
@@ -134,9 +129,9 @@ namespace Sudoku.UILogic
             userSolution = new Puzzle(puzzle, null);
             userTable = creator.Evaluate(userSolution);
 
-            for (uint i = 0; i < puzzle.Cells.Length; i++)
+            for (uint i = 0; i < puzzle.Givens.Length; i++)
             {
-                uint val = puzzle.Cells[i];
+                uint val = puzzle.Givens[i];
                 UICells[i].SetNumber(val);
                 UICells[i].SetGiven(val != 0);
                 UICells[i].SetSelected(false);
@@ -158,10 +153,10 @@ namespace Sudoku.UILogic
         private void OnCheck()
         {
             // Flag any value that the user guessed and is different in the solution
-            for(uint pos = 0; pos < solution.Cells.Length; pos++)
+            for(uint pos = 0; pos < puzzle.Solutions.Length; pos++)
             {
-                if (userSolution.Cells[pos] != 0 &&
-                    userSolution.Cells[pos] != solution.Cells[pos])
+                if (userSolution.Givens[pos] != 0 &&
+                    userSolution.Givens[pos] != puzzle.Solutions[pos])
                 {
                     UICells[pos].SetNumberStatus(true);
                 }
@@ -227,7 +222,7 @@ namespace Sudoku.UILogic
 
 
                 // Show picker if selected and not a given and picker not showing
-                if (selectedCell == pos && puzzle.Cells[pos] == 0 && !showingPicker)
+                if (selectedCell == pos && puzzle.Givens[pos] == 0 && !showingPicker)
                 {
                     showPicker = true;
                 }
@@ -328,7 +323,7 @@ namespace Sudoku.UILogic
 
             if (puzzle != null &&
                 selectedCell != uint.MaxValue &&
-                puzzle.Cells[selectedCell] == 0)
+                puzzle.Givens[selectedCell] == 0)
             {
                 var cell = UICells[selectedCell];
                 uint position = selectedCell;
@@ -447,7 +442,7 @@ namespace Sudoku.UILogic
             cell.ResetPossibles();
 
             // memorize the number
-            userSolution.Cells[pos] = number;
+            userSolution.Givens[pos] = number;
 
             // Evaluate the correctness
             userTable = creator.Evaluate(userSolution);

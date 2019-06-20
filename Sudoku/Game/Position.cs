@@ -161,9 +161,9 @@ namespace Sudoku.Game
             }
         }
 
-        public Position Opposite => GetCell(SEC_GROUP_SIZE - 1 - Row, SEC_GROUP_SIZE - 1 - Column);
-        public Position HorizontalFlip => GetCell(Row, SEC_GROUP_SIZE - 1 - Column);
-        public Position VerticalFlip => GetCell(SEC_GROUP_SIZE - 1 - Row, Column);
+        public Position Opposite => GetCell(ROW_COL_SEC_SIZE - 1 - Row, ROW_COL_SEC_SIZE - 1 - Column);
+        public Position HorizontalFlip => GetCell(Row, ROW_COL_SEC_SIZE - 1 - Column);
+        public Position VerticalFlip => GetCell(ROW_COL_SEC_SIZE - 1 - Row, Column);
 
         public override bool Equals(object obj)
         {
