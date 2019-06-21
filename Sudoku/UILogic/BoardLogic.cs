@@ -22,11 +22,8 @@ namespace Sudoku.UILogic
         // Creator/solver of sudoku puzzle
         private readonly Creator creator = new Creator();
 
-        // The initial puzzle
+        // The puzzle
         private Puzzle puzzle;
-
-        // The puzzle, as currently completed by the user
-        private Puzzle userSolution;
 
         // The information from the solver wrt the user solution
         private Table userTable;
@@ -126,8 +123,11 @@ namespace Sudoku.UILogic
         //
         private void OnReset()
         {
-            userSolution = new Puzzle(puzzle, null);
-            userTable = creator.Evaluate(userSolution);
+            for (uint i = 0; i < puzzle.Guesses.Length; i++)
+            {
+                puzzle.Guesses[i] = 0;
+            }
+            userTable = creator.Evaluate(puzzle);
 
             for (uint i = 0; i < puzzle.Givens.Length; i++)
             {
@@ -155,8 +155,8 @@ namespace Sudoku.UILogic
             // Flag any value that the user guessed and is different in the solution
             for(uint pos = 0; pos < puzzle.Solutions.Length; pos++)
             {
-                if (userSolution.Givens[pos] != 0 &&
-                    userSolution.Givens[pos] != puzzle.Solutions[pos])
+                if (puzzle.Guesses[pos] != 0 &&
+                    puzzle.Guesses[pos] != puzzle.Solutions[pos])
                 {
                     UICells[pos].SetNumberStatus(true);
                 }
@@ -170,8 +170,7 @@ namespace Sudoku.UILogic
         {
             if (userTable != null)
             {
-                var tmpPuzzle = new Puzzle(userSolution, null);
-                var pos = creator.GetHint(tmpPuzzle);
+                var pos = creator.GetHint(puzzle);
                 if (pos != null)
                 {
                     SelectCell(pos.Cell);
@@ -442,10 +441,10 @@ namespace Sudoku.UILogic
             cell.ResetPossibles();
 
             // memorize the number
-            userSolution.Givens[pos] = number;
+            puzzle.Guesses[pos] = number;
 
             // Evaluate the correctness
-            userTable = creator.Evaluate(userSolution);
+            userTable = creator.Evaluate(puzzle);
             if (userTable == null)
             {
                 // User selection makes puzzle impossible!
@@ -462,9 +461,6 @@ namespace Sudoku.UILogic
                 {
                     // Finished
                     PuzzleSolved?.Invoke(this, EventArgs.Empty);
-                }
-                else
-                {
                 }
             }
 

@@ -12,11 +12,14 @@ namespace Sudoku.Game
         // The puzzle itself
         public readonly uint[] Givens = new uint[Position.BOARD_SIZE];
 
+        // The user guesses
+        public readonly uint[] Guesses = new uint[Position.BOARD_SIZE];
+
         // The puzzle solution
         public readonly uint[] Solutions = new uint[Position.BOARD_SIZE];
 
         // Associated stats
-        public readonly Statistics Statistics;
+        public Statistics Statistics { get; internal set; }
 
         // Build an empty puzzle
         public Puzzle()
@@ -39,14 +42,13 @@ namespace Sudoku.Game
         }
 
         // Build a puzzle from another puzzle
-        public Puzzle(Puzzle puzzle, Statistics statistics)
+        public Puzzle(Puzzle src)
         {
             // Copy values
-            Array.Copy(puzzle.Givens, Givens, Givens.Length);
-            Array.Copy(puzzle.Solutions, Solutions, Solutions.Length);
-
-            // memorize stats
-            Statistics = statistics;
+            Array.Copy(src.Givens, Givens, Givens.Length);
+            Array.Copy(src.Guesses, Guesses, Guesses.Length);
+            Array.Copy(src.Solutions, Solutions, Solutions.Length);
+            Statistics = src.Statistics;
         }
 
         // IPrintSource interface

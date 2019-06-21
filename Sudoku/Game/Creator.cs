@@ -186,7 +186,7 @@ namespace Sudoku.Game
             Trace(ESev.Important, Print(puzzle, EPrintStyle.READABLE));
 
             // Update stats
-            puzzle = new Puzzle(puzzle, solvedPuzzle.Statistics);
+            puzzle.Statistics = solvedPuzzle.Statistics;
 
             return puzzle;
         }

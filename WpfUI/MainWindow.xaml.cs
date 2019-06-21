@@ -59,7 +59,7 @@ namespace WpfUI
 
         private void OnPuzzleSolved(object sender, EventArgs e)
         {
-            Dispatcher.InvokeAsync(() => MessageBox.Show("Congratulations, game won!"));
+            Dispatcher.InvokeAsync(() => MessageBox.Show("Congratulations, puzzle solved!"));
         }
 
         private void OnMouseDown(object sender, MouseButtonEventArgs e)

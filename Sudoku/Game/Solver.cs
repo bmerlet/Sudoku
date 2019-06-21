@@ -114,6 +114,11 @@ namespace Sudoku.Game
             foreach (var pos in Position.AllPositions)
             {
                 uint val = puzzle.Givens[pos.Cell];
+                if (val == 0)
+                {
+                    val = puzzle.Guesses[pos.Cell];
+                }
+
                 if (val != 0)
                 {
                     if (!solution[pos].IsPossible(val))
