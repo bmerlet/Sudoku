@@ -88,7 +88,7 @@ namespace FormsUI
 
         private void OnBoardLogicPuzzleSolved(object sender, EventArgs e)
         {
-            BeginInvoke((Action)(() => MessageBox.Show("Congratulations, game won!")));
+            BeginInvoke((Action)(() => MessageBox.Show("Congratulations, puzzle solved!")));
         }
 
         #endregion

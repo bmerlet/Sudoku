@@ -264,9 +264,9 @@ namespace Sudoku.UILogic
             var curPos = GetSelectedPosition();
             if (curPos.Column != Position.ROW_COL_SEC_SIZE - 1)
             {
-                var newPos = Position.GetCell(curPos.Row, curPos.Column + 1);
-                SelectCell(newPos.Cell);
+                curPos = Position.GetCell(curPos.Row, curPos.Column + 1);
             }
+            SelectCell(curPos.Cell);
         }
 
         public void OnMoveLeft()
@@ -274,9 +274,9 @@ namespace Sudoku.UILogic
             var curPos = GetSelectedPosition();
             if (curPos.Column != 0)
             {
-                var newPos = Position.GetCell(curPos.Row, curPos.Column - 1);
-                SelectCell(newPos.Cell);
+                curPos = Position.GetCell(curPos.Row, curPos.Column - 1);
             }
+            SelectCell(curPos.Cell);
         }
 
         public void OnMoveDown()
@@ -284,9 +284,9 @@ namespace Sudoku.UILogic
             var curPos = GetSelectedPosition();
             if (curPos.Row != Position.ROW_COL_SEC_SIZE - 1)
             {
-                var newPos = Position.GetCell(curPos.Row + 1, curPos.Column);
-                SelectCell(newPos.Cell);
+                curPos = Position.GetCell(curPos.Row + 1, curPos.Column);
             }
+            SelectCell(curPos.Cell);
         }
 
         public void OnMoveUp()
@@ -294,9 +294,9 @@ namespace Sudoku.UILogic
             var curPos = GetSelectedPosition();
             if (curPos.Row != 0)
             {
-                var newPos = Position.GetCell(curPos.Row - 1, curPos.Column);
-                SelectCell(newPos.Cell);
+                curPos = Position.GetCell(curPos.Row - 1, curPos.Column);
             }
+            SelectCell(curPos.Cell);
         }
 
         private Position GetSelectedPosition()
