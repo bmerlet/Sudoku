@@ -60,8 +60,11 @@
     <Compile Include="UILogic\IUIProvider.cs" />
     <Compile Include="UILogic\LogEntry.cs" />
     <Compile Include="UILogic\MainWindowLogic.cs" />
+    <Compile Include="UILogic\NewGameDialogLogic.cs" />
+    <Compile Include="UILogic\StatsDialogLogic.cs" />
     <Compile Include="UILogic\UICellLogic.cs" />
     <Compile Include="UILogic\Settings.cs" />
+    <Compile Include="UILogic\YesNoDialogLogic.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

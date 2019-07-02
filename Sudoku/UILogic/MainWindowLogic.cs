@@ -12,45 +12,70 @@ namespace Sudoku.UILogic
 {
     public class MainWindowLogic : LogicBase
     {
+        private readonly IUIProvider uiProvider;
+
         public MainWindowLogic(IUIProvider uiProvider)
         {
+            this.uiProvider = uiProvider;
+
             BoardLogic = new BoardLogic(uiProvider);
             SettingsManager = new SettingsManager<Settings>("Sarabande, Inc.", "Sudoku");
+            BoardLogic.PuzzleSolved += OnPuzzleSolved;
 
-            NewEasy = new CommandBase(() => OnGeneratePuzzle(EDifficulty.SIMPLE));
-            NewMedium = new CommandBase(() => OnGeneratePuzzle(EDifficulty.EASY));
-            NewHard = new CommandBase(() => OnGeneratePuzzle(EDifficulty.INTERMEDIATE));
-            NewVeryHard = new CommandBase(() => OnGeneratePuzzle(EDifficulty.EXPERT));
-
-            BoardLogic.PuzzleSolved += (s, e) => OnPuzzleSolved();
+            NewGame = new CommandBase(OnNewGame);
         }
 
-        public CommandBase NewEasy { get; }
-        public CommandBase NewMedium { get; }
-        public CommandBase NewHard { get; }
-        public CommandBase NewVeryHard { get; }
+        public CommandBase NewGame { get; }
 
         public BoardLogic BoardLogic { get; }
         public SettingsManager<Settings> SettingsManager { get; }
 
-        private void OnGeneratePuzzle(EDifficulty difficulty)
+        public void OnLoaded()
         {
-            if (NewEasy.CanExecute())
+            GenerateNewGame(true);
+        }
+
+        private void OnNewGame()
+        {
+            var logic = new YesNoDialogLogic("New puzzle", "Quit current puzzle and start a new one?");
+            bool result = uiProvider.DisplayDialog(logic);
+            if (result)
             {
-                BoardLogic.OnGeneratePuzzle(difficulty);
-                NewEasy.SetCanExecute(false);
-                NewMedium.SetCanExecute(false);
-                NewHard.SetCanExecute(false);
-                NewVeryHard.SetCanExecute(false);
+                GenerateNewGame(false);
             }
         }
 
-        private void OnPuzzleSolved()
+        private void GenerateNewGame(bool exitOnCancel)
         {
-            NewEasy.SetCanExecute(true);
-            NewMedium.SetCanExecute(true);
-            NewHard.SetCanExecute(true);
-            NewVeryHard.SetCanExecute(true);
+            var newGameDialogLogic = new NewGameDialogLogic();
+            bool result = uiProvider.DisplayDialog(newGameDialogLogic);
+            if (result)
+            {
+                BoardLogic.OnGeneratePuzzle(newGameDialogLogic.Difficulty);
+            }
+            else if (exitOnCancel)
+            {
+                uiProvider.Exit();
+            }
+        }
+
+        private void OnPuzzleSolved(object sender, EventArgs e)
+        {
+            uiProvider.RunAsyncOnUIThread(OnPuzzleSolvedAsync);
+        }
+
+        private void OnPuzzleSolvedAsync()
+        {
+            var logic = new YesNoDialogLogic("Solved", "Congratulations, you solved the puzzle!\nPlay again?");
+            bool result = uiProvider.DisplayDialog(logic);
+            if (result)
+            {
+                GenerateNewGame(false);
+            }
+            else
+            {
+                uiProvider.Exit();
+            }
         }
     }
 }

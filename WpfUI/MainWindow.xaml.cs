@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 using Sudoku.UILogic;
+using Toolbox.UILogic.Dialogs;
 
 namespace WpfUI
 {
@@ -22,7 +23,14 @@ namespace WpfUI
     /// </summary>
     public partial class MainWindow : Window, IUIProvider
     {
-        private MainWindowLogic logic;
+        #region Private members
+
+        private readonly MainWindowLogic logic;
+
+        #endregion
+
+        #region Constructor
+
         public MainWindow()
         {
             logic = new MainWindowLogic(this);
@@ -30,36 +38,37 @@ namespace WpfUI
 
             InitializeComponent();
 
-            Loaded += (s, e) => LoadSettings();
-            Closing += (s, e) => SaveSettings();
+            Loaded += (s, e) => OnLoaded();
+            Closing += (s, e) => OnClosing();
             board.MouseDown += OnMouseDown;
-
-            logic.BoardLogic.PuzzleSolved += OnPuzzleSolved;
-
         }
 
-        private void LoadSettings()
+        #endregion
+
+        #region React to UI actions
+
+        private void OnLoaded()
         {
+            // Load settings
             var settings = logic.SettingsManager.Load();
             if (settings != null)
             {
                 this.Left = settings.Left;
                 this.Top = settings.Top;
             }
+
+            // Show startup dialog
+            Dispatcher.InvokeAsync(() => logic.OnLoaded());
         }
 
-        private void SaveSettings()
+        private void OnClosing()
         {
+            // Save settings
             var settings = new Settings();
             settings.Left = (int)Left;
             settings.Top = (int)Top;
 
             logic.SettingsManager.Save(settings);
-        }
-
-        private void OnPuzzleSolved(object sender, EventArgs e)
-        {
-            Dispatcher.InvokeAsync(() => MessageBox.Show("Congratulations, puzzle solved!"));
         }
 
         private void OnMouseDown(object sender, MouseButtonEventArgs e)
@@ -138,6 +147,10 @@ namespace WpfUI
             contextMenu.IsOpen = logic.BoardLogic.OnSetNumber(number);
         }
 
+        #endregion
+
+        #region IUIProvider implementation
+
         public object GetBrush(EColors color)
         {
             switch(color)
@@ -151,5 +164,45 @@ namespace WpfUI
 
             return Brushes.Turquoise;
         }
+
+        public bool DisplayDialog(LogicDialogBase logic)
+        {
+            Window dialog = null;
+
+            if (logic is NewGameDialogLogic newGameDialogLogic)
+            {
+                dialog = new NewGameDialog(newGameDialogLogic);
+            }
+            else if (logic is YesNoDialogLogic yesNoDialogLogic)
+            {
+                dialog = new YesNoDialog(yesNoDialogLogic);
+            }
+            else if (logic is StatsDialogLogic statsDialogLogic)
+            {
+                dialog = new StatsDialog(statsDialogLogic);
+            }
+
+            if (dialog == null)
+            {
+                throw new InvalidOperationException($"Unknown dialog {logic.GetType()}");
+            }
+
+            dialog.Owner = this;
+            var result = dialog.ShowDialog();
+
+            return result == true;
+        }
+
+        public void RunAsyncOnUIThread(Action action)
+        {
+            Dispatcher.InvokeAsync(action);
+        }
+
+        public void Exit()
+        {
+            Application.Current.Shutdown();
+        }
+
+        #endregion
     }
 }

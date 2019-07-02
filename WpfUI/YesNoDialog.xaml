@@ -1,0 +1,16 @@
+﻿<Window x:Class="WpfUI.YesNoDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfUI"
+        mc:Ignorable="d"
+        Title="{Binding Title}" Height="150" Width="300" WindowStartupLocation="CenterOwner" ResizeMode="NoResize" Icon="sudoku.ico" >
+    <DockPanel>
+        <WrapPanel DockPanel.Dock="Bottom" HorizontalAlignment="Right" VerticalAlignment="Bottom" Orientation="Horizontal" Margin="0,8" >
+            <Button Content ="OK" Command="{Binding CommitCommand}" Margin="5,0"/>
+            <Button Content="Cancel" Command="{Binding CancelCommand}" Margin="5,0"/>
+        </WrapPanel>
+        <Label Content="{Binding Question}" HorizontalAlignment="Left" VerticalAlignment="Center" />
+    </DockPanel>
+</Window>

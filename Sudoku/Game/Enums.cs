@@ -11,16 +11,16 @@ namespace Sudoku.Game
         [EnumDescription("??")]
         UNKNOWN,
 
-        [EnumDescription("Simple")]
+        [EnumDescription("Easy")]
         SIMPLE,
 
-        [EnumDescription("Easy")]
+        [EnumDescription("Medium")]
         EASY,
 
-        [EnumDescription("Intermediate")]
+        [EnumDescription("Hard")]
         INTERMEDIATE,
 
-        [EnumDescription("Expert")]
+        [EnumDescription("Very hard")]
         EXPERT
     }
 

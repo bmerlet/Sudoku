@@ -1,0 +1,33 @@
+﻿<Window x:Class="WpfUI.NewGameDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfUI"
+        mc:Ignorable="d"
+        Title="New puzzle" Height="250" Width="150" Icon="sudoku.ico" ResizeMode="NoResize" WindowStartupLocation="CenterOwner">
+    <Window.Resources>
+        <ResourceDictionary>
+
+            <!-- Button style for commands -->
+            <Style x:Key="CommandButton" TargetType="Button">
+                <Setter Property="Margin" Value="0, 5, 0, 5"  />
+                <Setter Property="Padding" Value="5, 0, 5, 0"  />
+            </Style>
+        </ResourceDictionary>
+    </Window.Resources>
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Button Style="{StaticResource CommandButton}" Grid.Row="0" Content="Easy" Command="{Binding NewEasy}"/>
+        <Button Style="{StaticResource CommandButton}" Grid.Row="1" Content="Medium" Command="{Binding NewMedium}"/>
+        <Button Style="{StaticResource CommandButton}" Grid.Row="2" Content="Hard" Command="{Binding NewHard}"/>
+        <Button Style="{StaticResource CommandButton}" Grid.Row="3" Content="Very hard" Command="{Binding NewVeryHard}"/>
+        <Button Style="{StaticResource CommandButton}" Grid.Row="4" Content="Cancel" Command="{Binding CancelCommand}"/>
+    </Grid>
+</Window>

@@ -10,6 +10,7 @@ using System.Windows.Forms;
 
 using Sudoku.Game;
 using Sudoku.UILogic;
+using Toolbox.UILogic.Dialogs;
 
 namespace FormsUI
 {
@@ -35,7 +36,7 @@ namespace FormsUI
             InitializeComponent();
 
             // Get settings
-            Load += (s, e) => LoadSettings();
+            Load += (s, e) => OnLoad();
 
             // Save settings on closing
             Closing += (s, e) => SaveSettings();
@@ -52,24 +53,14 @@ namespace FormsUI
             CreateCells();
 
             // Initial state
-            buttonNewEasy.Enabled = logic.NewEasy.CanExecute();
-            buttonNewMedium.Enabled = logic.NewMedium.CanExecute();
-            buttonNewHard.Enabled = logic.NewHard.CanExecute();
-            buttonNewVeryHard.Enabled = logic.NewVeryHard.CanExecute();
             buttonUndo.Enabled = boardLogic.Undo.CanExecute();
             buttonRedo.Enabled = boardLogic.Redo.CanExecute();
             buttonReset.Enabled = boardLogic.Reset.CanExecute();
 
             // Listen to logic events
-            logic.NewEasy.CanExecuteChanged += (s, e) => buttonNewEasy.Enabled = logic.NewEasy.CanExecute();
-            logic.NewMedium.CanExecuteChanged += (s, e) => buttonNewMedium.Enabled = logic.NewMedium.CanExecute();
-            logic.NewHard.CanExecuteChanged += (s, e) => buttonNewHard.Enabled = logic.NewHard.CanExecute();
-            logic.NewVeryHard.CanExecuteChanged += (s, e) => buttonNewVeryHard.Enabled = logic.NewVeryHard.CanExecute();
             boardLogic.Undo.CanExecuteChanged += (s, e) => buttonUndo.Enabled = boardLogic.Undo.CanExecute();
             boardLogic.Redo.CanExecuteChanged += (s, e) => buttonRedo.Enabled = boardLogic.Redo.CanExecute();
             boardLogic.Reset.CanExecuteChanged += (s, e) => buttonReset.Enabled = boardLogic.Reset.CanExecute();
-
-            boardLogic.PuzzleSolved += OnBoardLogicPuzzleSolved;
         }
 
         private void CreateCells()
@@ -84,35 +75,16 @@ namespace FormsUI
 
         #endregion
 
-        #region Logic events
-
-        private void OnBoardLogicPuzzleSolved(object sender, EventArgs e)
-        {
-            BeginInvoke((Action)(() => MessageBox.Show("Congratulations, puzzle solved!")));
-        }
-
-        #endregion
-
         #region Actions
 
-        private void ButtonNewEasy_Click(object sender, EventArgs e)
+        private void buttonNewPuzzle_Click(object sender, EventArgs e)
         {
-            logic.NewEasy.Execute();
+            logic.NewGame.Execute();
         }
 
-        private void ButtonNewMedium_Click(object sender, EventArgs e)
+        private void buttonStats_Click(object sender, EventArgs e)
         {
-            logic.NewMedium.Execute();
-        }
-
-        private void ButtonNewHard_Click(object sender, EventArgs e)
-        {
-            logic.NewHard.Execute();
-        }
-
-        private void ButtonNewVeryHard_Click(object sender, EventArgs e)
-        {
-            logic.NewVeryHard.Execute();
+            boardLogic.Stats.Execute();
         }
 
         private void ButtonReset_Click(object sender, EventArgs e)
@@ -210,13 +182,17 @@ namespace FormsUI
             return false;
         }
 
-        private void LoadSettings()
+        private void OnLoad()
         {
+            // Get settings
             var settings = logic.SettingsManager.Load();
             if (settings != null)
             {
                 DesktopLocation = new Point(settings.Left, settings.Top);
             }
+
+            // Show the start dialog
+            BeginInvoke((Action)(() => logic.OnLoaded()));
         }
 
         private void SaveSettings()
@@ -244,6 +220,43 @@ namespace FormsUI
             }
 
             return Color.Turquoise;
+        }
+
+        public bool DisplayDialog(LogicDialogBase logic)
+        {
+            Form dialog = null;
+
+            if (logic is NewGameDialogLogic newGameDialogLogic)
+            {
+                dialog = new NewGameDialog(newGameDialogLogic);
+            }
+            else if (logic is YesNoDialogLogic yesNoDialogLogic)
+            {
+                dialog = new YesNoDialog(yesNoDialogLogic);
+            }
+            else if (logic is StatsDialogLogic statsDialogLogic)
+            {
+                dialog = new StatsDialog(statsDialogLogic);
+            }
+
+            if (dialog == null)
+            {
+                throw new InvalidOperationException($"Unknown dialog {logic.GetType()}");
+            }
+
+            var result = dialog.ShowDialog();
+
+            return  result == DialogResult.OK;
+        }
+
+        public void RunAsyncOnUIThread(Action action)
+        {
+            BeginInvoke(action);
+        }
+
+        public void Exit()
+        {
+            Application.Exit();
         }
 
         #endregion

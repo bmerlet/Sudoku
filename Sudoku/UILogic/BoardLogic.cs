@@ -42,17 +42,23 @@ namespace Sudoku.UILogic
         private readonly List<LogEntry> logEntries = new List<LogEntry>();
         private int logIndex;
 
+        // UI provider
+        private readonly IUIProvider uiProvider;
+
         #endregion
 
         #region Constructor
 
         public BoardLogic(IUIProvider uiProvider)
         {
+            this.uiProvider = uiProvider;
+
             Undo = new CommandBase(OnUndo, false);
             Redo = new CommandBase(OnRedo, false);
             Reset = new CommandBase(OnReset, false);
             Check = new CommandBase(OnCheck, false);
             Hint = new CommandBase(OnHint, false);
+            Stats = new CommandBase(OnStats, true);
             KbdNumber = new CommandBase(OnKbdNumber, true);
             KbdPossible = new CommandBase(OnKbdPossible, true);
             MoveRight = new CommandBase(OnMoveRight, true);
@@ -79,6 +85,9 @@ namespace Sudoku.UILogic
 
         // The cell logic array
         public UICellLogic[] UICells { get; } = new UICellLogic[Creator.BOARD_SIZE];
+
+        // Stats commands
+        public CommandBase Stats { get; private set;  }
 
         // Reset command
         public CommandBase Reset { get; private set; }
@@ -177,6 +186,15 @@ namespace Sudoku.UILogic
                     showingPicker = false;
                 }
             }
+        }
+
+        //
+        // Display stats
+        //
+        private void OnStats()
+        {
+            var statsDialog = new StatsDialogLogic(puzzle.Statistics);
+            uiProvider.DisplayDialog(statsDialog);
         }
 
         //

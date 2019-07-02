@@ -33,10 +33,8 @@
             this.tableLayoutPanelButtons = new System.Windows.Forms.TableLayoutPanel();
             this.buttonUndo = new System.Windows.Forms.Button();
             this.buttonReset = new System.Windows.Forms.Button();
-            this.buttonNewVeryHard = new System.Windows.Forms.Button();
-            this.buttonNewHard = new System.Windows.Forms.Button();
-            this.buttonNewMedium = new System.Windows.Forms.Button();
-            this.buttonNewEasy = new System.Windows.Forms.Button();
+            this.buttonStats = new System.Windows.Forms.Button();
+            this.buttonNewPuzzle = new System.Windows.Forms.Button();
             this.buttonRedo = new System.Windows.Forms.Button();
             this.tableLayoutPanelBoard = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanelMain.SuspendLayout();
@@ -55,7 +53,7 @@
             this.tableLayoutPanelMain.Name = "tableLayoutPanelMain";
             this.tableLayoutPanelMain.RowCount = 1;
             this.tableLayoutPanelMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanelMain.Size = new System.Drawing.Size(735, 555);
+            this.tableLayoutPanelMain.Size = new System.Drawing.Size(700, 555);
             this.tableLayoutPanelMain.TabIndex = 0;
             // 
             // tableLayoutPanelButtons
@@ -65,13 +63,11 @@
             this.tableLayoutPanelButtons.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanelButtons.Controls.Add(this.buttonUndo, 0, 6);
             this.tableLayoutPanelButtons.Controls.Add(this.buttonReset, 0, 5);
-            this.tableLayoutPanelButtons.Controls.Add(this.buttonNewVeryHard, 0, 4);
-            this.tableLayoutPanelButtons.Controls.Add(this.buttonNewHard, 0, 3);
-            this.tableLayoutPanelButtons.Controls.Add(this.buttonNewMedium, 0, 2);
-            this.tableLayoutPanelButtons.Controls.Add(this.buttonNewEasy, 0, 1);
+            this.tableLayoutPanelButtons.Controls.Add(this.buttonStats, 0, 4);
+            this.tableLayoutPanelButtons.Controls.Add(this.buttonNewPuzzle, 0, 3);
             this.tableLayoutPanelButtons.Controls.Add(this.buttonRedo, 1, 6);
             this.tableLayoutPanelButtons.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanelButtons.Location = new System.Drawing.Point(608, 3);
+            this.tableLayoutPanelButtons.Location = new System.Drawing.Point(573, 3);
             this.tableLayoutPanelButtons.Name = "tableLayoutPanelButtons";
             this.tableLayoutPanelButtons.RowCount = 7;
             this.tableLayoutPanelButtons.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 48.71795F));
@@ -107,53 +103,29 @@
             this.buttonReset.UseVisualStyleBackColor = true;
             this.buttonReset.Click += new System.EventHandler(this.ButtonReset_Click);
             // 
-            // buttonNewVeryHard
+            // buttonStats
             // 
-            this.buttonNewVeryHard.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.tableLayoutPanelButtons.SetColumnSpan(this.buttonNewVeryHard, 2);
-            this.buttonNewVeryHard.Location = new System.Drawing.Point(9, 414);
-            this.buttonNewVeryHard.Name = "buttonNewVeryHard";
-            this.buttonNewVeryHard.Size = new System.Drawing.Size(105, 28);
-            this.buttonNewVeryHard.TabIndex = 3;
-            this.buttonNewVeryHard.Text = "New very hard";
-            this.buttonNewVeryHard.UseVisualStyleBackColor = true;
-            this.buttonNewVeryHard.Click += new System.EventHandler(this.ButtonNewVeryHard_Click);
+            this.buttonStats.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.tableLayoutPanelButtons.SetColumnSpan(this.buttonStats, 2);
+            this.buttonStats.Location = new System.Drawing.Point(9, 414);
+            this.buttonStats.Name = "buttonStats";
+            this.buttonStats.Size = new System.Drawing.Size(105, 28);
+            this.buttonStats.TabIndex = 3;
+            this.buttonStats.Text = "Stats";
+            this.buttonStats.UseVisualStyleBackColor = true;
+            this.buttonStats.Click += new System.EventHandler(this.buttonStats_Click);
             // 
-            // buttonNewHard
+            // buttonNewPuzzle
             // 
-            this.buttonNewHard.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.tableLayoutPanelButtons.SetColumnSpan(this.buttonNewHard, 2);
-            this.buttonNewHard.Location = new System.Drawing.Point(9, 368);
-            this.buttonNewHard.Name = "buttonNewHard";
-            this.buttonNewHard.Size = new System.Drawing.Size(105, 28);
-            this.buttonNewHard.TabIndex = 2;
-            this.buttonNewHard.Text = "New hard";
-            this.buttonNewHard.UseVisualStyleBackColor = true;
-            this.buttonNewHard.Click += new System.EventHandler(this.ButtonNewHard_Click);
-            // 
-            // buttonNewMedium
-            // 
-            this.buttonNewMedium.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.tableLayoutPanelButtons.SetColumnSpan(this.buttonNewMedium, 2);
-            this.buttonNewMedium.Location = new System.Drawing.Point(9, 322);
-            this.buttonNewMedium.Name = "buttonNewMedium";
-            this.buttonNewMedium.Size = new System.Drawing.Size(105, 28);
-            this.buttonNewMedium.TabIndex = 1;
-            this.buttonNewMedium.Text = "New medium";
-            this.buttonNewMedium.UseVisualStyleBackColor = true;
-            this.buttonNewMedium.Click += new System.EventHandler(this.ButtonNewMedium_Click);
-            // 
-            // buttonNewEasy
-            // 
-            this.buttonNewEasy.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.tableLayoutPanelButtons.SetColumnSpan(this.buttonNewEasy, 2);
-            this.buttonNewEasy.Location = new System.Drawing.Point(9, 276);
-            this.buttonNewEasy.Name = "buttonNewEasy";
-            this.buttonNewEasy.Size = new System.Drawing.Size(105, 28);
-            this.buttonNewEasy.TabIndex = 0;
-            this.buttonNewEasy.Text = "New easy";
-            this.buttonNewEasy.UseVisualStyleBackColor = true;
-            this.buttonNewEasy.Click += new System.EventHandler(this.ButtonNewEasy_Click);
+            this.buttonNewPuzzle.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.tableLayoutPanelButtons.SetColumnSpan(this.buttonNewPuzzle, 2);
+            this.buttonNewPuzzle.Location = new System.Drawing.Point(9, 368);
+            this.buttonNewPuzzle.Name = "buttonNewPuzzle";
+            this.buttonNewPuzzle.Size = new System.Drawing.Size(105, 28);
+            this.buttonNewPuzzle.TabIndex = 2;
+            this.buttonNewPuzzle.Text = "New";
+            this.buttonNewPuzzle.UseVisualStyleBackColor = true;
+            this.buttonNewPuzzle.Click += new System.EventHandler(this.buttonNewPuzzle_Click);
             // 
             // buttonRedo
             // 
@@ -191,7 +163,7 @@
             this.tableLayoutPanelBoard.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 11.11111F));
             this.tableLayoutPanelBoard.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 11.11111F));
             this.tableLayoutPanelBoard.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 11.11111F));
-            this.tableLayoutPanelBoard.Size = new System.Drawing.Size(599, 549);
+            this.tableLayoutPanelBoard.Size = new System.Drawing.Size(564, 549);
             this.tableLayoutPanelBoard.TabIndex = 1;
             // 
             // MainWindow
@@ -215,10 +187,8 @@
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanelButtons;
         private System.Windows.Forms.Button buttonUndo;
         private System.Windows.Forms.Button buttonReset;
-        private System.Windows.Forms.Button buttonNewVeryHard;
-        private System.Windows.Forms.Button buttonNewHard;
-        private System.Windows.Forms.Button buttonNewMedium;
-        private System.Windows.Forms.Button buttonNewEasy;
+        private System.Windows.Forms.Button buttonStats;
+        private System.Windows.Forms.Button buttonNewPuzzle;
         private System.Windows.Forms.Button buttonRedo;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanelBoard;
     }
