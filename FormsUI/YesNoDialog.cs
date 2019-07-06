@@ -22,6 +22,8 @@ namespace FormsUI
 
             Text = logic.Title;
             labelString.Text = logic.Question;
+            buttonOK.Text = logic.LeftButtonText;
+            buttonCancel.Text = logic.RightButtonText;
         }
 
         private void buttonOK_Click(object sender, EventArgs e)

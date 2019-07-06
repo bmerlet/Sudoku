@@ -10,14 +10,18 @@ namespace Sudoku.UILogic
 {
     public class YesNoDialogLogic : LogicDialogBase
     {
-        public YesNoDialogLogic(string title, string question)
+        public YesNoDialogLogic(string title, string question, bool yesNo)
         {
             Title = title;
             Question = question;
+            LeftButtonText = yesNo ? "Yes" : "OK";
+            RightButtonText = yesNo ? "No" : "Cancel";
         }
         
         public string Title { get; }
         public string Question { get; }
+        public string LeftButtonText { get; }
+        public string RightButtonText { get; }
 
         protected override bool? Commit()
         {

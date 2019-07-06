@@ -8,8 +8,8 @@
         Title="{Binding Title}" Height="150" Width="300" WindowStartupLocation="CenterOwner" ResizeMode="NoResize" Icon="sudoku.ico" >
     <DockPanel>
         <WrapPanel DockPanel.Dock="Bottom" HorizontalAlignment="Right" VerticalAlignment="Bottom" Orientation="Horizontal" Margin="0,8" >
-            <Button Content ="OK" Command="{Binding CommitCommand}" Margin="5,0"/>
-            <Button Content="Cancel" Command="{Binding CancelCommand}" Margin="5,0"/>
+            <Button Content ="{Binding LeftButtonText}" Command="{Binding CommitCommand}" Margin="5,0" Width="60"/>
+            <Button Content="{Binding RightButtonText}" Command="{Binding CancelCommand}" Margin="5,0" Width="60"/>
         </WrapPanel>
         <Label Content="{Binding Question}" HorizontalAlignment="Left" VerticalAlignment="Center" />
     </DockPanel>

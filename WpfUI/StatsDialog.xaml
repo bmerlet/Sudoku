@@ -41,6 +41,6 @@
         <Label Grid.Row="7" Grid.Column="1" Content="{Binding NumGuesses}"/>
         <Label Grid.Row="8" Content="Difficulty"/>
         <Label Grid.Row="8" Grid.Column="1" Content="{Binding Difficulty}"/>
-        <Button Grid.Row="9" Grid.ColumnSpan="2" Content="OK" Command="{Binding CommitCommand}" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="10,0"/>
+        <Button Grid.Row="9" Grid.ColumnSpan="2"  Width="60" Content="OK" Command="{Binding CommitCommand}" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="10,0"/>
     </Grid>
 </Window>

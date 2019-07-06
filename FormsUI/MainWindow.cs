@@ -102,7 +102,17 @@ namespace FormsUI
             boardLogic.Redo.Execute();
         }
 
-        protected override bool ProcessDialogKey(Keys keyData)
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            if (ProcessKeyboardInput(keyData))
+            {
+                return true;
+            }
+
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
+
+        private bool ProcessKeyboardInput(Keys keyData)
         {
             if (keyData == (Keys.Control | Keys.C) && boardLogic.Check.CanExecute())
             {

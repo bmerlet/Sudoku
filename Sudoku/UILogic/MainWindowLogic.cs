@@ -37,7 +37,7 @@ namespace Sudoku.UILogic
 
         private void OnNewGame()
         {
-            var logic = new YesNoDialogLogic("New puzzle", "Quit current puzzle and start a new one?");
+            var logic = new YesNoDialogLogic("New puzzle", "Quit current puzzle and start a new one?", true);
             bool result = uiProvider.DisplayDialog(logic);
             if (result)
             {
@@ -66,7 +66,7 @@ namespace Sudoku.UILogic
 
         private void OnPuzzleSolvedAsync()
         {
-            var logic = new YesNoDialogLogic("Solved", "Congratulations, you solved the puzzle!\nPlay again?");
+            var logic = new YesNoDialogLogic("Solved", "Congratulations, you solved the puzzle!\n\nPlay again?", true);
             bool result = uiProvider.DisplayDialog(logic);
             if (result)
             {
