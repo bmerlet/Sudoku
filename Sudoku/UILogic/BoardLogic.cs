@@ -142,6 +142,7 @@ namespace Sudoku.UILogic
             {
                 uint val = puzzle.Givens[i];
                 UICells[i].SetNumber(val);
+                UICells[i].SetNumberStatus(false);
                 UICells[i].SetGiven(val != 0);
                 UICells[i].SetSelected(false);
                 UICells[i].ResetPossibles();
@@ -371,9 +372,7 @@ namespace Sudoku.UILogic
                     newPossibles = cell.GetPossiblesAsBitList();
 
                     // Unselect the cell
-                    cell.SetSelected(false);
-                    lastSelectedCell = selectedCell;
-                    selectedCell = uint.MaxValue;
+                    //UpdateSelection(uint.MaxValue);
 
                     // close context menu
                     keepContextMenuOpen = false;
@@ -403,6 +402,7 @@ namespace Sudoku.UILogic
                 SetNumber(entryToUndo.Position, entryToUndo.OldNumber);
                 UICells[entryToUndo.Position].SetPossiblesAsBitList(entryToUndo.OldPossibles);
                 UpdateAllNumberAndPossibleStatus();
+                UpdateSelection(entryToUndo.SelectedCell);
 
                 Redo.SetCanExecute(true);
             }
@@ -424,15 +424,38 @@ namespace Sudoku.UILogic
                 SetNumber(entryToRedo.Position, entryToRedo.NewNumber);
                 UICells[entryToRedo.Position].SetPossiblesAsBitList(entryToRedo.NewPossibles);
                 UpdateAllNumberAndPossibleStatus();
+                UpdateSelection(entryToRedo.SelectedCell);
 
                 Undo.SetCanExecute(true);
                 Reset.SetCanExecute(true);
             }
         }
 
+        private void UpdateSelection(uint newSelection)
+        {
+            // If change of selection
+            if (newSelection != selectedCell)
+            {
+                // Unselect previously selected cell
+                if (selectedCell != uint.MaxValue)
+                {
+                    UICells[selectedCell].SetSelected(false);
+                    lastSelectedCell = selectedCell;
+                }
+
+                // Select new cell
+                if (newSelection != uint.MaxValue)
+                {
+                    UICells[newSelection].SetSelected(false);
+                }
+
+                selectedCell = newSelection;
+            }
+        }
+
         private void LogAction(uint position, uint oldNumber, uint newNumber, uint oldPossibles, uint newPossibles)
         {
-            var entry = new LogEntry(position, oldNumber, newNumber, oldPossibles, newPossibles);
+            var entry = new LogEntry(position, oldNumber, newNumber, oldPossibles, newPossibles, selectedCell);
             if (logIndex < logEntries.Count)
             {
                 logEntries[logIndex] = entry;
@@ -478,6 +501,7 @@ namespace Sudoku.UILogic
                 if (userTable.IsSolved)
                 {
                     // Finished
+                    UpdateSelection(uint.MaxValue);
                     PuzzleSolved?.Invoke(this, EventArgs.Empty);
                 }
             }

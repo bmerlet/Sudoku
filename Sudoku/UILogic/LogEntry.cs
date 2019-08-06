@@ -13,14 +13,16 @@ namespace Sudoku.UILogic
         public readonly uint OldPossibles;
         public readonly uint NewNumber;
         public readonly uint NewPossibles;
+        public readonly uint SelectedCell;
 
-        public LogEntry(uint position, uint oldNumber, uint newNumber, uint oldPossibles, uint newPossibles)
+        public LogEntry(uint position, uint oldNumber, uint newNumber, uint oldPossibles, uint newPossibles, uint selectedCell)
         {
             Position = position;
             OldNumber = oldNumber;
             NewNumber = newNumber;
             OldPossibles = oldPossibles;
             NewPossibles = newPossibles;
+            SelectedCell = selectedCell;
         }
     }
 }
