@@ -345,10 +345,12 @@ namespace Sudoku.UILogic
             {
                 var cell = UICells[selectedCell];
                 uint position = selectedCell;
+
+                bool log = true;
                 uint oldNumber = cell.Number == "" ? 0 : uint.Parse(cell.Number);
                 uint oldPossibles = cell.GetPossiblesAsBitList();
-                uint newNumber;
-                uint newPossibles;
+                uint newNumber = 0;
+                uint newPossibles = 0;
 
                 if (pickPossibilities)
                 {
@@ -362,7 +364,7 @@ namespace Sudoku.UILogic
                     // Keep the context menu open
                     keepContextMenuOpen = true;
                 }
-                else
+                else if (number != oldNumber)
                 {
                     // Set the number in the cell, and evaluate
                     SetNumber(selectedCell, number);
@@ -377,9 +379,20 @@ namespace Sudoku.UILogic
                     // close context menu
                     keepContextMenuOpen = false;
                 }
+                else
+                {
+                    // Setting same number, ignore
+                    log = false;
+
+                    // close context menu
+                    keepContextMenuOpen = false;
+                }
 
                 // Log the change
-                LogAction(position, oldNumber, newNumber, oldPossibles, newPossibles);
+                if (log)
+                {
+                    LogAction(position, oldNumber, newNumber, oldPossibles, newPossibles);
+                }
             }
 
             return keepContextMenuOpen;
