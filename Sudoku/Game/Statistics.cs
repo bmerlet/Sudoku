@@ -21,12 +21,11 @@ namespace Sudoku.Game
         public readonly uint NumRollBacks;
         public readonly EDifficulty Difficulty;
 
-        internal Statistics(List<LogEntry> logEntries)
+        internal Statistics(List<Finding> findings)
         {
-            // Count each type of event
-            foreach (var log in logEntries)
+            foreach (var finding in findings)
             {
-                switch(log.Type)
+                switch (finding.Type)
                 {
                     case EMarkType.GIVEN:
                         NumGivens += 1;
@@ -79,13 +78,9 @@ namespace Sudoku.Game
             {
                 Difficulty = EDifficulty.EASY;
             }
-            else if (NumSingles > 0)
+            else // NumSingles > 0
             {
                 Difficulty = EDifficulty.SIMPLE;
-            }
-            else
-            {
-                Difficulty = EDifficulty.UNKNOWN;
             }
         }
     }

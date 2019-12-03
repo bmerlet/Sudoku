@@ -181,6 +181,10 @@ namespace WpfUI
             {
                 dialog = new StatsDialog(statsDialogLogic);
             }
+            else if (logic is InfoDialogLogic infoDialogLogic)
+            {
+                dialog = new InfoDialog(infoDialogLogic);
+            }
 
             if (dialog == null)
             {

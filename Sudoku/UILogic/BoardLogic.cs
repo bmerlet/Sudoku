@@ -58,6 +58,7 @@ namespace Sudoku.UILogic
             Reset = new CommandBase(OnReset, false);
             Check = new CommandBase(OnCheck, false);
             Hint = new CommandBase(OnHint, false);
+            Query = new CommandBase(OnQuery, false);
             Stats = new CommandBase(OnStats, true);
             KbdNumber = new CommandBase(OnKbdNumber, true);
             KbdPossible = new CommandBase(OnKbdPossible, true);
@@ -96,9 +97,10 @@ namespace Sudoku.UILogic
         public CommandBase Undo { get; private set; }
         public CommandBase Redo { get; private set; }
 
-        // Check and Hint command (^C and ^H)
+        // Check, Hint and Query commands (^C and ^H and ^Q)
         public CommandBase Check { get; private set; }
         public CommandBase Hint { get; private set; }
+        public CommandBase Query { get; private set; }
 
         // User typed a number
         public CommandBase KbdNumber { get; private set; }
@@ -123,6 +125,7 @@ namespace Sudoku.UILogic
 
             Check.SetCanExecute(true);
             Hint.SetCanExecute(true);
+            Query.SetCanExecute(true);
 
             OnReset();
         }
@@ -180,11 +183,28 @@ namespace Sudoku.UILogic
         {
             if (userTable != null)
             {
-                var pos = creator.GetHint(puzzle);
-                if (pos != null)
+                var hint = creator.GetHint(puzzle);
+                if (hint != null)
                 {
-                    SelectCell(pos.Cell);
+                    SelectCell(hint.Position.Cell);
                     showingPicker = false;
+                }
+            }
+        }
+
+        //
+        // Process query
+        //
+        private void OnQuery()
+        {
+            if (userTable != null)
+            {
+                var hint = creator.GetHint(puzzle);
+                if (hint != null)
+                {
+                    SelectCell(hint.Position.Cell);
+                    showingPicker = false;
+                    uiProvider.DisplayDialog(new InfoDialogLogic("Hint", hint.Explanation));
                 }
             }
         }

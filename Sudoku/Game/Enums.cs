@@ -8,9 +8,6 @@ namespace Sudoku.Game
 {
     public enum EDifficulty
     {
-        [EnumDescription("??")]
-        UNKNOWN,
-
         [EnumDescription("Easy")]
         SIMPLE,
 

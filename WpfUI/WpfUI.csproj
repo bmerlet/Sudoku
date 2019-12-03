@@ -60,6 +60,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="InfoDialog.xaml.cs">
+      <DependentUpon>InfoDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="NewGameDialog.xaml.cs">
       <DependentUpon>NewGameDialog.xaml</DependentUpon>
     </Compile>
@@ -72,6 +75,10 @@
     <Compile Include="YesNoDialog.xaml.cs">
       <DependentUpon>YesNoDialog.xaml</DependentUpon>
     </Compile>
+    <Page Include="InfoDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

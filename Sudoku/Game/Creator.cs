@@ -15,11 +15,6 @@ namespace Sudoku.Game
             Puzzle puzzle = null;
             //Severity = ESev.Interesting;
 
-            if (difficulty == EDifficulty.UNKNOWN)
-            {
-                return GeneratePuzzle(difficulty, ESymmetry.RANDOM);
-            }
-
             for (int retry = 0; retry < 1000; retry++)
             {
                 puzzle = GeneratePuzzle(difficulty, ESymmetry.RANDOM);
@@ -36,7 +31,7 @@ namespace Sudoku.Game
             return puzzle;
         }
 
-        public Puzzle GeneratePuzzle(EDifficulty difficulty = EDifficulty.UNKNOWN, ESymmetry symmetry = ESymmetry.NONE)
+        public Puzzle GeneratePuzzle(EDifficulty difficulty, ESymmetry symmetry = ESymmetry.NONE)
         {
             // Random symmetry if so desired
             if (symmetry == ESymmetry.RANDOM)
@@ -57,14 +52,12 @@ namespace Sudoku.Game
                 stopwatch.Start();
             }
 
-            // Don't record history while generating.
-            LogDecisions = false;
-
             // Create an empty puzzle
             var puzzle = new Puzzle();
 
             // Solve all the way. This invents a puzzle and returns it completely solved.
-            puzzle = Solve(puzzle, false);
+            // Do not keep stats 
+            puzzle = Solve(puzzle, false, false);
 
             var solveTime = TrackTiming ? stopwatch.Elapsed : TimeSpan.MinValue;
 
@@ -84,10 +77,6 @@ namespace Sudoku.Game
 
             // Create a position randomizer
             var randomizer = new PositionRandomizer(random);
-
-            // If we want a specific difficulty, log the decisions we make in the solver so we can check
-            // the difficulty after each hollowing out of the puzzle
-            LogDecisions = difficulty != EDifficulty.UNKNOWN;
 
             // Try removing a 1,2 or 4 values at a time (depending on symmetry).
             // Put them back if the puzzle does not have a unique solution anymore.
@@ -130,16 +119,16 @@ namespace Sudoku.Game
                     puzzle.Givens[pos.Cell] = 0;
                 }
 
-                // See if we can solve in one
+                // See if we can solve in one, and keep track of the stats so that we can assess the difficulty
                 bool putValuesBack = false;
-                var tmpSolvedPuzzle = Solve(puzzle, true);
+                var tmpSolvedPuzzle = Solve(puzzle, true, true);
                 if (tmpSolvedPuzzle == null)
                 {
                     // Nope, put the values back
                     putValuesBack = true;
                     Trace(ESev.Interesting, $"Put back {savedCells.Count} values");
                 }
-                else if (difficulty != EDifficulty.UNKNOWN)
+                else
                 {
                     Trace(ESev.Interesting, $"Desired difficulty {difficulty}, after hollowing out: {tmpSolvedPuzzle.Statistics.Difficulty} pos {posInOrder}");
 
@@ -167,13 +156,6 @@ namespace Sudoku.Game
             }
 
             var hollowOutTime = TrackTiming ? stopwatch.Elapsed : TimeSpan.MinValue;
-
-            // Solve one last time to get the stats if we did not want a specific difficulty
-            if (difficulty == EDifficulty.UNKNOWN)
-            {
-                LogDecisions = true;
-                solvedPuzzle = Solve(puzzle, true);
-            }
 
             if (TrackTiming)
             {

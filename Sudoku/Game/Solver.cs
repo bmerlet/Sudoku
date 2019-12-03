@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Text;
 
 namespace Sudoku.Game
 {
@@ -9,18 +10,13 @@ namespace Sudoku.Game
         #region private members
 
         private Table solution = new Table();
-        private List<LogEntry> logEntries = new List<LogEntry>();
         protected Random random = new Random();
-
-        private bool findFirstMark;
-        private Position firstMarkPosition;
 
         #endregion
 
         #region Debug properties
 
         public bool TrackTiming { get; set; }
-        protected bool LogDecisions;
 
         public enum ESev { Critical, Important, Interesting, Babble }
         public ESev Severity { get; set; } = ESev.Critical;
@@ -41,9 +37,11 @@ namespace Sudoku.Game
         /// <summary>
         /// Entry point to solve a sudoku puzzle
         /// </summary>
-        /// <returns>statistics if solved, null otherwise</returns>
-        public Puzzle Solve(Puzzle puzzle, bool withoutGuesses)
+        /// <returns>puzzle if solved, null otherwise</returns>
+        public Puzzle Solve(Puzzle puzzle, bool withoutGuesses, bool keepStats)
         {
+            var findings = keepStats ? new List<Finding>() : null;
+
             // Copy the puzzle into "solution"
             if (!CopyPuzzleToSolution(puzzle))
             {
@@ -52,14 +50,15 @@ namespace Sudoku.Game
             }
 
             // Now Solve the puzzle
-            if (!Solve(2, withoutGuesses))
+            if (!Solve(2, withoutGuesses, findings))
             {
                 // Imppossible puzzle
                 return null;
             }
 
             // Make a new puzzle from the solution
-            var statistics = LogDecisions ? new Statistics(logEntries) : null;
+            var statistics = keepStats ? new Statistics(findings) : null;
+            // var statistics = LogDecisions ? new Statistics(logEntries) : null;
             var solvedPuzzle = new Puzzle(solution, statistics);
 
             return solvedPuzzle;
@@ -80,7 +79,7 @@ namespace Sudoku.Game
             return new Table(solution);
         }
 
-        public Position GetHint(Puzzle puzzle)
+        public Hint GetHint(Puzzle puzzle)
         {
             if (!CopyPuzzleToSolution(puzzle))
             {
@@ -88,16 +87,30 @@ namespace Sudoku.Game
                 return null;
             }
 
-            for (findFirstMark = true; findFirstMark;)
+            var explanation = new StringBuilder();
+
+            while (true)
             {
-                if (!SingleSolveMove(2))
+                // Step-solve
+                var findings = SingleSolveMove(2);
+                if (findings == null)
                 {
                     // Unsolvable puzzle
                     return null;
                 }
-            }
 
-            return firstMarkPosition;
+                // See if we have a marking
+                foreach (var finding in findings)
+                {
+                    explanation.Append(finding.ToString());
+                    explanation.Append(Environment.NewLine);
+
+                    if (finding is FoundValue fv)
+                    {
+                        return new Hint(fv.Position, fv.Value, explanation.ToString());
+                    }
+                }
+            }
         }
 
         //
@@ -113,12 +126,16 @@ namespace Sudoku.Game
             // Copy the puzzle into "solution"
             foreach (var pos in Position.AllPositions)
             {
+                // See if the cell is a given
                 uint val = puzzle.Givens[pos.Cell];
+
+                // If not a given, see if it is a guess
                 if (val == 0)
                 {
                     val = puzzle.Guesses[pos.Cell];
                 }
 
+                // If given or guess, mark it in the solution
                 if (val != 0)
                 {
                     if (!solution[pos].IsPossible(val))
@@ -137,11 +154,24 @@ namespace Sudoku.Game
         //
         // Recursively solve a puzzle
         //
-        private bool Solve(uint round, bool withoutGuesses)
+        private bool Solve(uint round, bool withoutGuesses, List<Finding> findings)
         {
             // Exhaust all deductions
-            while (SingleSolveMove(round))
+            while (true)
             {
+                var fs = SingleSolveMove(round);
+                if (fs == null)
+                {
+                    // We cannot solve the puzzle without a guess
+                    break;
+                }
+
+                // Keep track of the deductions if asked to
+                if (findings != null)
+                {
+                    findings.AddRange(fs);
+                }
+
                 if (solution.IsSolved)
                 {
                     // Puzzle is solved
@@ -177,7 +207,7 @@ namespace Sudoku.Game
             uint nextRound = round + 2;
 
             // Try all guesses
-            foreach(var guess in guesses)
+            foreach (var guess in guesses)
             {
                 // Make a guess
                 Mark(guess.Key, guess.Value, guessRound, EMarkType.GUESS);
@@ -195,7 +225,7 @@ namespace Sudoku.Game
                 }
 
                 // Solve recursively
-                if (Solve(nextRound, withoutGuesses))
+                if (Solve(nextRound, withoutGuesses, findings))
                 {
                     return true;
                 }
@@ -212,15 +242,15 @@ namespace Sudoku.Game
         //
         // Return an array of guesses
         //
-        private List<KeyValuePair<Position,uint>> Guesses
+        private List<KeyValuePair<Position, uint>> Guesses
         {
             get
             {
                 // Compute all the guesses
                 var guesses = new List<KeyValuePair<Position, uint>>();
-                foreach(var pos in PositionsWithFewestPossibilities)
+                foreach (var pos in PositionsWithFewestPossibilities)
                 {
-                    foreach(var cellValue in Cell.AllValidCellValues)
+                    foreach (var cellValue in Cell.AllValidCellValues)
                     {
                         if (solution[pos].IsPossible(cellValue))
                         {
@@ -288,9 +318,7 @@ namespace Sudoku.Game
         // Reinstate all the possibilities removed by a round, and also unmark all cells marked during the round
         private void Rollback(uint round)
         {
-            Log(round, EMarkType.ROLLBACK, null, uint.MaxValue);
-
-            foreach(var pos in Position.AllPositions)
+            foreach (var pos in Position.AllPositions)
             {
                 solution[pos].Unmark(round);
             }
@@ -300,27 +328,73 @@ namespace Sudoku.Game
 
         #region Sieves
 
-        private bool SingleSolveMove(uint round)
+        private Finding[] SingleSolveMove(uint round)
         {
-            if (OnlyPossibilityForCell(round)) return true;
-            if (OnlyValue(round, EMarkType.HIDDEN_SINGLE_SECTION)) return true;
-            if (OnlyValue(round, EMarkType.HIDDEN_SINGLE_ROW)) return true;
-            if (OnlyValue(round, EMarkType.HIDDEN_SINGLE_COLUMN)) return true;
-            if (HandleNakedPairs(round)) return true;
-            if (PointingRowAndColumnReduction(round)) return true;
-            if (RowBoxReduction(round)) return true;
-            if (ColumnBoxReduction(round)) return true;
-            if (HiddenPairInRow(round)) return true;
-            if (HiddenPairInColumn(round)) return true;
-            if (HiddenPairInSection(round)) return true;
-            return false;
+            var findings = OnlyPossibilityForCell(round);
+            if (findings == null)
+            {
+                findings = OnlyValue(round, EMarkType.HIDDEN_SINGLE_SECTION);
+            }
+            if (findings == null)
+            {
+                findings = OnlyValue(round, EMarkType.HIDDEN_SINGLE_ROW);
+            }
+            if (findings == null)
+            {
+                findings = OnlyValue(round, EMarkType.HIDDEN_SINGLE_COLUMN);
+            }
+            if (findings == null)
+            {
+                findings = HandleNakedPairs(round);
+            }
+            if (findings == null)
+            {
+                findings = PointingRowAndColumnReduction(round);
+            }
+            if (findings == null)
+            {
+                findings = RowBoxReduction(round);
+            }
+            if (findings == null)
+            {
+                findings = ColumnBoxReduction(round);
+            }
+            if (findings == null)
+            {
+                findings = HiddenPairInRow(round);
+            }
+            if (findings == null)
+            {
+                findings = HiddenPairInColumn(round);
+            }
+            if (findings == null)
+            {
+                findings = HiddenPairInSection(round);
+            }
+
+            // Mark all the found marks
+            if (findings != null)
+            {
+                foreach (var f in findings)
+                {
+                    if (f is FoundValue fv)
+                    {
+                        Mark(fv);
+                    }
+                }
+
+                // We have done something
+                return findings;
+            }
+
+            return null;
         }
 
         //
         // Mark exactly one cell that has a single possibility, if such a cell exists.
         // This type of cell is often called a "single"
         //
-        private bool OnlyPossibilityForCell(uint round)
+        private Finding[] OnlyPossibilityForCell(uint round)
         {
             // go through the whole board
             foreach (var position in Position.AllPositions)
@@ -344,26 +418,26 @@ namespace Sudoku.Game
                         }
                     }
 
-                    // If we found exactly one possible solution, then mark it
+                    // If we found exactly one possible solution, return it
                     if (count == 1)
                     {
-                        Mark(position, cellVal, round, EMarkType.SINGLE);
-                        return true;
+                        return new Finding[] { new FoundValue(position, cellVal, round, EMarkType.SINGLE) };
                     }
                 }
             }
-            return false;
+
+            return null;
         }
 
         //
         // Mark exactly one cell which is the only possible value for a row, column, or section,
         // if such cell exists. This type of cell is often called a section "hidden single"
         //
-        private bool OnlyValue(uint round, EMarkType type)
+        private Finding[] OnlyValue(uint round, EMarkType type)
         {
             // Decide what to scan based on type
             IEnumerable<Position> mainIterator = null;
-            switch(type)
+            switch (type)
             {
                 case EMarkType.HIDDEN_SINGLE_ROW: mainIterator = Position.AllRowStarts; break;
                 case EMarkType.HIDDEN_SINGLE_COLUMN: mainIterator = Position.AllColumnStarts; break;
@@ -403,12 +477,12 @@ namespace Sudoku.Game
                     // we have found our hidden single
                     if (count == 1)
                     {
-                        Mark(position, cellValue, round, type);
-                        return true;
+                        return new Finding[] { new FoundValue(position, cellValue, round, type) };
                     }
                 }
             }
-            return false;
+
+            return null;
         }
 
         //
@@ -416,8 +490,10 @@ namespace Sudoku.Game
         // are in the same row or column or section, then no other cell
         // in the row/column/section can have those numbers
         //
-        private bool HandleNakedPairs(uint round)
+        private Finding[] HandleNakedPairs(uint round)
         {
+            Finding[] findings = null;
+
             // Iterate over the whole board
             foreach (var position1 in Position.AllPositions)
             {
@@ -438,41 +514,52 @@ namespace Sudoku.Game
                                 // Found another cell with the same 2 possibilities
 
                                 // See if in the same row as the other
-                                if (position1.Row == position2.Row &&
-                                    HandleNakedPairs(round, position1, position2, EMarkType.NAKED_PAIR_ROW))
+                                if (position1.Row == position2.Row)
                                 {
-                                    return true;
+                                    findings = HandleNakedPairs(round, position1, position2, EMarkType.NAKED_PAIR_ROW);
+                                    if (findings != null)
+                                    {
+                                        return findings;
+                                    }
                                 }
 
                                 // See if in the same column as the other
-                                if (position1.Column == position2.Column &&
-                                    HandleNakedPairs(round, position1, position2, EMarkType.NAKED_PAIR_COLUMN))
+                                if (position1.Column == position2.Column)
                                 {
-                                    return true;
+                                    findings = HandleNakedPairs(round, position1, position2, EMarkType.NAKED_PAIR_COLUMN);
+                                    if (findings != null)
+                                    {
+                                        return findings;
+                                    }
                                 }
 
                                 // See if in the same section as the other
-                                if (position1.Section == position2.Section &&
-                                    HandleNakedPairs(round, position1, position2, EMarkType.NAKED_PAIR_SECTION))
+                                if (position1.Section == position2.Section)
                                 {
-                                    return true;
+                                    findings = HandleNakedPairs(round, position1, position2, EMarkType.NAKED_PAIR_SECTION);
+                                    if (findings != null)
+                                    {
+                                        return findings;
+                                    }
                                 }
                             }
                         }
                     }
                 }
             }
-            return false;
+
+            return null;
         }
 
         //
         // Naked pair processing: Remove possibilities from row or column or section
         //
-        private bool HandleNakedPairs(uint round, Position position1, Position position2, EMarkType type)
+        private Finding[] HandleNakedPairs(uint round, Position position1, Position position2, EMarkType type)
         {
-            bool doneSomething = false;
             IEnumerable<Position> enumerator = null;
-            switch(type)
+            List<FoundImpossibility> impossibilities = null;
+
+            switch (type)
             {
                 case EMarkType.NAKED_PAIR_ROW: enumerator = position1.AllColumnCells; break;
                 case EMarkType.NAKED_PAIR_COLUMN: enumerator = position1.AllRowCells; break;
@@ -484,42 +571,38 @@ namespace Sudoku.Game
             {
                 if (!position1.Equals(position3) && !position2.Equals(position3))
                 {
-                    doneSomething |= RemovePossibilitiesInOneFromTwo(position1, position3, round);
+                    foreach (var cv in Cell.AllValidCellValues)
+                    {
+                        if (solution[position1].IsPossible(cv) &&
+                            RemovePossiblity(position3, cv, round))
+                        {
+                            if (impossibilities == null)
+                            {
+                                impossibilities = new List<FoundImpossibility>();
+                            }
+
+                            impossibilities.Add(new FoundImpossibility(position3, cv, round, type));
+                        }
+                    }
                 }
             }
 
-            if (doneSomething)
+            if (impossibilities == null)
             {
-                Log(round, type, position1);
+                return null;
             }
 
-            return doneSomething;
-        }
-
-        //
-        // Remove the possibilities at position1 from position2
-        //
-        private bool RemovePossibilitiesInOneFromTwo(Position position1, Position position2, uint round)
-        {
-            bool doneSomething = false;
-
-            foreach (var cv in Cell.AllValidCellValues)
-            {
-                if (solution[position1].IsPossible(cv))
-                {
-                    doneSomething |= RemovePossiblity(position2, cv, round);
-                }
-            }
-
-            return doneSomething;
+            return impossibilities.ToArray();
         }
 
         //
         // If a value can only live in a specific row/column of a section, then it necessarily lives in
         // another row/column for the 2 other sections that share this row/column. 
         //
-        private bool PointingRowAndColumnReduction(uint round)
+        private Finding[] PointingRowAndColumnReduction(uint round)
         {
+            List<Finding> findings = null;
+
             // Iterate on all values
             foreach (var cellValue in Cell.AllValidCellValues)
             {
@@ -573,19 +656,22 @@ namespace Sudoku.Game
                     {
                         // Yes. So the value lives somewhere on this row in this section, therefore
                         // it does not live in this row in the sections sharing the same row
-                        bool doneSomething = false;
-                        foreach(var rowPos in Position.GetCellFromRow(row).AllColumnCells)
+                        foreach (var rowPos in Position.GetCellFromRow(row).AllColumnCells)
                         {
-                            if (rowPos.Section != sectionPos.Section)
+                            if (rowPos.Section != sectionPos.Section &&
+                                RemovePossiblity(rowPos, cellValue, round))
                             {
-                                doneSomething |= RemovePossiblity(rowPos, cellValue, round);
+                                if (findings == null)
+                                {
+                                    findings = new List<Finding>();
+                                }
+                                findings.Add(new FoundImpossibility(rowPos, cellValue, round, EMarkType.POINTING_PAIR_TRIPLE_ROW));
                             }
                         }
 
-                        if (doneSomething)
+                        if (findings != null)
                         {
-                            Log(round, EMarkType.POINTING_PAIR_TRIPLE_ROW, sectionPos, cellValue);
-                            return true;
+                            return findings.ToArray();
                         }
                     }
 
@@ -594,24 +680,28 @@ namespace Sudoku.Game
                     {
                         // Yes. So the value lives somewhere on this column in this section, therefore
                         // it does not live in this column in the sections sharing the same column
-                        bool doneSomething = false;
                         foreach (var columnPos in Position.GetCellFromColumn(column).AllRowCells)
                         {
-                            if (columnPos.Section != sectionPos.Section)
+                            if (columnPos.Section != sectionPos.Section &&
+                                RemovePossiblity(columnPos, cellValue, round))
                             {
-                                doneSomething |= RemovePossiblity(columnPos, cellValue, round);
+                                if (findings == null)
+                                {
+                                    findings = new List<Finding>();
+                                }
+                                findings.Add(new FoundImpossibility(columnPos, cellValue, round, EMarkType.POINTING_PAIR_TRIPLE_COLUMN));
                             }
                         }
 
-                        if (doneSomething)
+                        if (findings != null)
                         {
-                            Log(round, EMarkType.POINTING_PAIR_TRIPLE_COLUMN, sectionPos, cellValue);
-                            return true;
+                            return findings.ToArray();
                         }
                     }
                 }
             }
-            return false;
+
+            return null;
         }
 
 
@@ -619,8 +709,10 @@ namespace Sudoku.Game
         // If a value can only live in a specific section of a row, then it cannot live in
         // the 2 other rows of this section. 
         //
-        private bool RowBoxReduction(uint round)
+        private Finding[] RowBoxReduction(uint round)
         {
+            List<Finding> impossibilities = null;
+
             // Iterate on all values
             foreach (var cellValue in Cell.AllValidCellValues)
             {
@@ -657,33 +749,38 @@ namespace Sudoku.Game
                     {
                         // Yes. So the value lives somewhere in this section and row, therefore
                         // it does not live in the other rows of this section
-                        bool doneSomething = false;
                         foreach (var sectionPos in Position.GetCellFromSection(rowBox).AllSectionCells)
                         {
-                            if (rowPosition.Row != sectionPos.Row)
+                            if (rowPosition.Row != sectionPos.Row &&
+                                RemovePossiblity(sectionPos, cellValue, round))
                             {
-                                doneSomething |= RemovePossiblity(sectionPos, cellValue, round);
+                                if (impossibilities == null)
+                                {
+                                    impossibilities = new List<Finding>();
+                                }
+                                impossibilities.Add(new FoundImpossibility(sectionPos, cellValue, round, EMarkType.ROW_BOX));
                             }
                         }
 
-                        if (doneSomething)
+                        if (impossibilities != null)
                         {
-                            Log(round, EMarkType.ROW_BOX, rowPosition, cellValue);
-                            return true;
+                            return impossibilities.ToArray();
                         }
                     }
                 }
             }
 
-            return false;
+            return null;
         }
 
         //
         // If a value can only live in a specific section of a column, then it cannot live in
         // the 2 other columns of this section. 
         //
-        private bool ColumnBoxReduction(uint round)
+        private Finding[] ColumnBoxReduction(uint round)
         {
+            List<Finding> impossibilities = null;
+
             // Iterate on all values
             foreach (var cellValue in Cell.AllValidCellValues)
             {
@@ -720,35 +817,38 @@ namespace Sudoku.Game
                     {
                         // Yes. So the value lives somewhere in this section and column, therefore
                         // it does not live in the other columns of this section
-                        bool doneSomething = false;
                         foreach (var sectionPos in Position.GetCellFromSection(columnBox).AllSectionCells)
                         {
-                            if (columnPosition.Column != sectionPos.Column)
+                            if (columnPosition.Column != sectionPos.Column &&
+                                RemovePossiblity(sectionPos, cellValue, round))
                             {
-                                doneSomething |= RemovePossiblity(sectionPos, cellValue, round);
+                                if (impossibilities == null)
+                                {
+                                    impossibilities = new List<Finding>();
+                                }
+                                impossibilities.Add(new FoundImpossibility(sectionPos, cellValue, round, EMarkType.COLUMN_BOX));
                             }
                         }
 
-                        if (doneSomething)
+                        if (impossibilities != null)
                         {
-                            Log(round, EMarkType.COLUMN_BOX, columnPosition, cellValue);
-                            return true;
+                            return impossibilities.ToArray();
                         }
                     }
                 }
             }
 
-            return false;
+            return null;
         }
 
         //
         // If 2 values are possible exactly twice and at the same spots in a row,
         // then no other values are possible at those spots
         //
-        private bool HiddenPairInRow(uint round)
+        private Finding[] HiddenPairInRow(uint round)
         {
             // Iterate on all rows
-            foreach(var rowPosition in Position.AllRowStarts)
+            foreach (var rowPosition in Position.AllRowStarts)
             {
                 // Iterate on all values
                 foreach (var cellValue1 in Cell.AllValidCellValues)
@@ -821,20 +921,26 @@ namespace Sudoku.Game
                                 if (pos1_1.Equals(pos2_1) && pos1_2.Equals(pos2_2))
                                 {
                                     // This is a pair, eliminate all other possibilites from those 2 locations
-                                    bool doneSomething = false;
+                                    var impossibilities = new List<Finding>();
                                     foreach (var cellValue3 in Cell.AllValidCellValues)
                                     {
                                         if (cellValue3 != cellValue1 && cellValue3 != cellValue2)
                                         {
-                                            doneSomething |= RemovePossiblity(pos1_1, cellValue3, round);
-                                            doneSomething |= RemovePossiblity(pos1_2, cellValue3, round);
+                                            if (RemovePossiblity(pos1_1, cellValue3, round))
+                                            {
+                                                impossibilities.Add(new FoundImpossibility(pos1_1, cellValue3, round, EMarkType.HIDDEN_PAIR_ROW));
+                                            }
+
+                                            if (RemovePossiblity(pos1_2, cellValue3, round))
+                                            {
+                                                impossibilities.Add(new FoundImpossibility(pos1_2, cellValue3, round, EMarkType.HIDDEN_PAIR_ROW));
+                                            }
                                         }
                                     }
 
-                                    if (doneSomething)
+                                    if (impossibilities.Count > 0)
                                     {
-                                        Log(round, EMarkType.HIDDEN_PAIR_ROW, pos1_1, cellValue1);
-                                        return true;
+                                        return impossibilities.ToArray();
                                     }
                                 }
                             }
@@ -842,14 +948,14 @@ namespace Sudoku.Game
                     }
                 }
             }
-            return false;
+            return null;
         }
 
         //
         // If 2 values are possible exactly twice and at the same spots in a column,
         // then no other values are possible at those spots
         //
-        private bool HiddenPairInColumn(uint round)
+        private Finding[] HiddenPairInColumn(uint round)
         {
             // Iterate on all rows
             foreach (var columnPosition in Position.AllColumnStarts)
@@ -925,20 +1031,25 @@ namespace Sudoku.Game
                                 if (pos1_1.Equals(pos2_1) && pos1_2.Equals(pos2_2))
                                 {
                                     // This is a pair, eliminate all other possibilites from those 2 locations
-                                    bool doneSomething = false;
+                                    var impossibilities = new List<Finding>();
                                     foreach (var cellValue3 in Cell.AllValidCellValues)
                                     {
                                         if (cellValue3 != cellValue1 && cellValue3 != cellValue2)
                                         {
-                                            doneSomething |= RemovePossiblity(pos1_1, cellValue3, round);
-                                            doneSomething |= RemovePossiblity(pos1_2, cellValue3, round);
+                                            if (RemovePossiblity(pos1_1, cellValue3, round))
+                                            {
+                                                impossibilities.Add(new FoundImpossibility(pos1_1, cellValue3, round, EMarkType.HIDDEN_PAIR_COLUMN));
+                                            }
+                                            if (RemovePossiblity(pos1_2, cellValue3, round))
+                                            {
+                                                impossibilities.Add(new FoundImpossibility(pos1_2, cellValue3, round, EMarkType.HIDDEN_PAIR_COLUMN));
+                                            }
                                         }
                                     }
 
-                                    if (doneSomething)
+                                    if (impossibilities.Count > 0)
                                     {
-                                        Log(round, EMarkType.HIDDEN_PAIR_COLUMN, pos1_1, cellValue1);
-                                        return true;
+                                        return impossibilities.ToArray();
                                     }
                                 }
                             }
@@ -946,14 +1057,15 @@ namespace Sudoku.Game
                     }
                 }
             }
-            return false;
+
+            return null;
         }
 
         //
         // If 2 values are possible exactly twice and at the same spots in a section,
         // then no other values are possible at those spots
         //
-        private bool HiddenPairInSection(uint round)
+        private Finding[] HiddenPairInSection(uint round)
         {
             // Iterate on all sections
             foreach (var sectionPosition in Position.AllSectionStarts)
@@ -1029,20 +1141,25 @@ namespace Sudoku.Game
                                 if (pos1_1.Equals(pos2_1) && pos1_2.Equals(pos2_2))
                                 {
                                     // This is a pair, eliminate all other possibilites from those 2 locations
-                                    bool doneSomething = false;
+                                    var impossibilities = new List<Finding>();
                                     foreach (var cellValue3 in Cell.AllValidCellValues)
                                     {
                                         if (cellValue3 != cellValue1 && cellValue3 != cellValue2)
                                         {
-                                            doneSomething |= RemovePossiblity(pos1_1, cellValue3, round);
-                                            doneSomething |= RemovePossiblity(pos1_2, cellValue3, round);
+                                            if (RemovePossiblity(pos1_1, cellValue3, round))
+                                            {
+                                                impossibilities.Add(new FoundImpossibility(pos1_1, cellValue3, round, EMarkType.HIDDEN_PAIR_SECTION));
+                                            }
+                                            if (RemovePossiblity(pos1_2, cellValue3, round))
+                                            {
+                                                impossibilities.Add(new FoundImpossibility(pos1_2, cellValue3, round, EMarkType.HIDDEN_PAIR_SECTION));
+                                            }
                                         }
                                     }
 
-                                    if (doneSomething)
+                                    if (impossibilities.Count > 0)
                                     {
-                                        Log(round, EMarkType.HIDDEN_PAIR_SECTION, pos1_1, cellValue1);
-                                        return true;
+                                        return impossibilities.ToArray();
                                     }
                                 }
                             }
@@ -1050,7 +1167,8 @@ namespace Sudoku.Game
                     }
                 }
             }
-            return false;
+
+            return null;
         }
 
         #endregion
@@ -1060,6 +1178,11 @@ namespace Sudoku.Game
         //
         // Mark the given position with the given value
         //
+        private void Mark(FoundValue finding)
+        {
+            Mark(finding.Position, finding.Value, finding.Round, finding.Type);
+        }
+
         private void Mark(Position position, uint val, uint round, EMarkType type)
         {
             // Consistency checks
@@ -1071,12 +1194,6 @@ namespace Sudoku.Game
             if (!solution[position].IsPossible(val))
             {
                 throw new InvalidOperationException("Position not possible");
-            }
-
-            if (findFirstMark)
-            {
-                findFirstMark = false;
-                firstMarkPosition = position;
             }
 
             // Enter the value in the solution, adorned with the round number (for rollback)
@@ -1099,23 +1216,6 @@ namespace Sudoku.Game
             {
                 solution[pos].SetImpossible(val, round);
             }
-
-            Log(round, type, position, val);
-        }
-
-        private void Log(uint round, EMarkType type, Position position = null, uint value = uint.MaxValue)
-        {
-            if (LogDecisions || Severity == ESev.Babble)
-            {
-                var logEntry = new LogEntry(round, type, position, value);
-
-                if (LogDecisions)
-                {
-                    logEntries.Add(logEntry);
-                }
-
-                Trace(ESev.Babble, logEntry.ToString());
-            }
         }
 
         private bool RemovePossiblity(Position position, uint value, uint round)
@@ -1136,7 +1236,6 @@ namespace Sudoku.Game
         private void Reset()
         {
             solution.Reset();
-            logEntries.Clear();
         }
 
         // Randomize a list
@@ -1180,6 +1279,25 @@ namespace Sudoku.Game
         }
 
         #endregion
-
     }
+
+    #region Hint class
+
+    public class Hint
+    {
+        public readonly Position Position;
+        public readonly uint Value;
+        public readonly string Explanation;
+
+        public Hint(Position position, uint value, string explanation)
+        {
+            Position = position;
+            Value = value;
+            Explanation = explanation;
+        }
+    }
+
+    #endregion
+
+
 }

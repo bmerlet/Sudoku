@@ -15,6 +15,7 @@
         <KeyBinding Key="Z" Modifiers="Ctrl"   Command="{Binding BoardLogic.Undo}"/>
         <KeyBinding Key="C" Modifiers="Ctrl"   Command="{Binding BoardLogic.Check}"/>
         <KeyBinding Key="H" Modifiers="Ctrl"   Command="{Binding BoardLogic.Hint}"/>
+        <KeyBinding Key="Q" Modifiers="Ctrl"   Command="{Binding BoardLogic.Query}"/>
         <KeyBinding Key="D0"                   Command="{Binding BoardLogic.KbdNumber}" CommandParameter="0"/>
         <KeyBinding Key="D1"                   Command="{Binding BoardLogic.KbdNumber}" CommandParameter="1"/>
         <KeyBinding Key="D2"                   Command="{Binding BoardLogic.KbdNumber}" CommandParameter="2"/>
@@ -26,6 +27,7 @@
         <KeyBinding Key="D8"                   Command="{Binding BoardLogic.KbdNumber}" CommandParameter="8"/>
         <KeyBinding Key="D9"                   Command="{Binding BoardLogic.KbdNumber}" CommandParameter="9"/>
         <KeyBinding Key="Space"                Command="{Binding BoardLogic.KbdNumber}" CommandParameter="0"/>
+        <KeyBinding Key="Delete"               Command="{Binding BoardLogic.KbdNumber}" CommandParameter="0"/>
         <KeyBinding Key="F1"                   Command="{Binding BoardLogic.KbdPossible}" CommandParameter="1"/>
         <KeyBinding Key="F2"                   Command="{Binding BoardLogic.KbdPossible}" CommandParameter="2"/>
         <KeyBinding Key="F3"                   Command="{Binding BoardLogic.KbdPossible}" CommandParameter="3"/>
