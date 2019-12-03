@@ -25,7 +25,7 @@ namespace Sudoku.UILogic
         public string NumHiddenPairs => stats.NumHiddenPairs.ToString();
         public string NumBoxLineReduction => stats.NumBoxLineReduction.ToString();
         public string NumPointingPairTriple => stats.NumPointingPairTriple.ToString();
-        public string NumGuesses => stats.NumGuesses.ToString();
+        public string NumGuesses => (stats.NumGuesses + 1).ToString();
         public string NumRollBacks => stats.NumRollBacks.ToString();
         public string Difficulty => Toolbox.Attributes.EnumDescriptionAttribute.GetDescription(stats.Difficulty);
 
