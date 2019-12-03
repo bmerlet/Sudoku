@@ -126,6 +126,12 @@ namespace FormsUI
                 return true;
             }
 
+            if (keyData == (Keys.Control | Keys.Q) && boardLogic.Query.CanExecute())
+            {
+                boardLogic.Query.Execute();
+                return true;
+            }
+
             if (keyData == (Keys.Control | Keys.Z) && boardLogic.Undo.CanExecute())
             {
                 boardLogic.Undo.Execute();
@@ -159,7 +165,7 @@ namespace FormsUI
                 return true;
             }
 
-            if (keyData == Keys.Space)
+            if (keyData == Keys.Space || keyData == Keys.Delete)
             {
                 boardLogic.KbdNumber.Execute("0");
                 return true;
@@ -235,6 +241,12 @@ namespace FormsUI
         public bool DisplayDialog(LogicDialogBase logic)
         {
             Form dialog = null;
+
+            if (logic is InfoDialogLogic infoDialogLogic)
+            {
+                MessageBox.Show(infoDialogLogic.Info, infoDialogLogic.Title);
+                return true;
+            }
 
             if (logic is NewGameDialogLogic newGameDialogLogic)
             {
