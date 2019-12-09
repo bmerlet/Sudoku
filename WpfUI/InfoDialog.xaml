@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfUI"
         mc:Ignorable="d"
-        Title="{Binding Title}" SizeToContent="Height" Height="150" Width="500" WindowStartupLocation="CenterOwner" ResizeMode="NoResize" Icon="sudoku.ico" >
+        Title="{Binding Title}" SizeToContent="Height" Height="150" Width="600" WindowStartupLocation="CenterOwner" ResizeMode="NoResize" Icon="sudoku.ico" >
     <DockPanel>
         <WrapPanel DockPanel.Dock="Bottom" HorizontalAlignment="Center" VerticalAlignment="Bottom" Orientation="Horizontal" Margin="0,8" >
             <Button Content ="OK" Command="{Binding CommitCommand}" Margin="5,0" Width="60"/>

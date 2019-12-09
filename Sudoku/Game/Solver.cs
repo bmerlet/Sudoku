@@ -43,7 +43,7 @@ namespace Sudoku.Game
             var findings = keepStats ? new List<Finding>() : null;
 
             // Copy the puzzle into "solution"
-            if (!CopyPuzzleToSolution(puzzle))
+            if (!CopyPuzzleToSolution(puzzle, findings))
             {
                 // Impossible puzzle
                 return null;
@@ -70,7 +70,7 @@ namespace Sudoku.Game
         public Table Evaluate(Puzzle puzzle)
         {
             // Copy the puzzle into "solution"
-            if (!CopyPuzzleToSolution(puzzle))
+            if (!CopyPuzzleToSolution(puzzle, null))
             {
                 // Impossible puzzle
                 return null;
@@ -81,7 +81,7 @@ namespace Sudoku.Game
 
         public Hint GetHint(Puzzle puzzle)
         {
-            if (!CopyPuzzleToSolution(puzzle))
+            if (!CopyPuzzleToSolution(puzzle, null))
             {
                 // Impossible puzzle
                 return null;
@@ -116,7 +116,7 @@ namespace Sudoku.Game
         //
         // Copy a naked puzzle into a solution, removing possiblities as the cells are marked
         //
-        private bool CopyPuzzleToSolution(Puzzle puzzle)
+        private bool CopyPuzzleToSolution(Puzzle puzzle, List<Finding> findings)
         {
             uint round = 1;
 
@@ -142,6 +142,11 @@ namespace Sudoku.Game
                     {
                         // Impossible puzzle right off the start
                         return false;
+                    }
+
+                    if (findings != null)
+                    {
+                        findings.Add(new FoundValue(pos, val, round, EMarkType.GIVEN));
                     }
 
                     Mark(pos, val, round, EMarkType.GIVEN);
