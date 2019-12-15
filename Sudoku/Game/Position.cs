@@ -182,6 +182,11 @@ namespace Sudoku.Game
             return $"{Cell} Row:{Row} Col:{Column} Sec:{Section}";
         }
 
+        public string ToReadableString()
+        {
+            return $"row {Row + 1}, col {Column + 1}";
+        }
+
         // Create all the position instances that we will need once and for all
         static private Position[] PositionCache;
         static Position()

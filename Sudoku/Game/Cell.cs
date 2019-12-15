@@ -68,7 +68,7 @@ namespace Sudoku.Game
             }
         }
 
-            public bool IsPossible(uint value)
+        public bool IsPossible(uint value)
         {
             if (value == 0)
             {

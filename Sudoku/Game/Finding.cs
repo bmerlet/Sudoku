@@ -33,7 +33,7 @@ namespace Sudoku.Game
 
         public override string ToString()
         {
-            return $"Found value {Value} at position {Position} of type {Type}";
+            return $"Found value {Value} at {Position.ToReadableString()} of type {Type}";
         }
     }
 
@@ -45,7 +45,7 @@ namespace Sudoku.Game
 
         public override string ToString()
         {
-            return $"Found impossible value {Value} at position {Position} because of {Type}";
+            return $"Found impossible value {Value} at {Position} because of {Type}";
         }
     }
 }

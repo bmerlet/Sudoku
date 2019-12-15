@@ -102,8 +102,23 @@ namespace Sudoku.Game
                 // See if we have a marking
                 foreach (var finding in findings)
                 {
-                    explanation.Append(finding.ToString());
-                    explanation.Append(Environment.NewLine);
+                    bool addExplanation = true;
+
+                    if (finding is FoundImpossibility fi)
+                    {
+                        // ZZZ RFU: Need to remove impossibilities already found by the player, but they
+                        // are not part of puzzle...
+                        // if (puzzle.Possibities[fi.Position) does not contain fi.Value)
+                        // {
+                        //      addExplanation = false;
+                        // }
+                    }
+
+                    if (addExplanation)
+                    {
+                        explanation.Append(finding.ToString());
+                        explanation.Append(Environment.NewLine);
+                    }
 
                     if (finding is FoundValue fv)
                     {
