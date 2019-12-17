@@ -14,10 +14,12 @@ namespace Sudoku.UILogic
         {
             Title = title;
             Info = info;
+            InfoDoubleUnderlines = info.Replace("_", "__");
         }
 
         public string Title { get; private set; }
         public string Info { get; private set; }
+        public string InfoDoubleUnderlines { get; private set; }
 
 
         protected override bool? Commit()

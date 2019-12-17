@@ -10,6 +10,6 @@
         <WrapPanel DockPanel.Dock="Bottom" HorizontalAlignment="Center" VerticalAlignment="Bottom" Orientation="Horizontal" Margin="0,8" >
             <Button Content ="OK" Command="{Binding CommitCommand}" Margin="5,0" Width="60"/>
         </WrapPanel>
-        <Label Content="{Binding Info}" HorizontalAlignment="Left" VerticalAlignment="Center" />
+        <Label Content="{Binding InfoDoubleUnderlines}" HorizontalAlignment="Left" VerticalAlignment="Center" />
     </DockPanel>
 </Window>
