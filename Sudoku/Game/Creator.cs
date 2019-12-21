@@ -13,7 +13,6 @@ namespace Sudoku.Game
         public Puzzle GeneratePuzzle(EDifficulty difficulty)
         {
             Puzzle puzzle = null;
-            //Severity = ESev.Interesting;
 
             for (int retry = 0; retry < 1000; retry++)
             {

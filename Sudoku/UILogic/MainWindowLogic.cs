@@ -37,12 +37,7 @@ namespace Sudoku.UILogic
 
         private void OnNewGame()
         {
-            var logic = new YesNoDialogLogic("New puzzle", "Quit current puzzle and start a new one?", true);
-            bool result = uiProvider.DisplayDialog(logic);
-            if (result)
-            {
-                GenerateNewGame(false);
-            }
+            GenerateNewGame(false);
         }
 
         private void GenerateNewGame(bool exitOnCancel)
