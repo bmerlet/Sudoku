@@ -11,11 +11,16 @@ namespace Sudoku.UILogic
 {
     public class StatsDialogLogic : LogicDialogBase
     {
-        private readonly Statistics stats;
+        private readonly Statistics puzzleStats;
+        private readonly Statistics currentStats;
+        private Statistics stats;
+        private static bool lastCurrentState = false;
 
-        public StatsDialogLogic(Statistics stats)
+        public StatsDialogLogic(Statistics puzzleStats, Statistics currentStats)
         {
-            this.stats = stats;
+            this.puzzleStats = puzzleStats;
+            this.currentStats = currentStats;
+            this.stats = lastCurrentState ? currentStats : puzzleStats;
         }
 
         public string NumGivens => stats.NumGivens.ToString();
@@ -29,6 +34,32 @@ namespace Sudoku.UILogic
         public string NumRollBacks => stats.NumRollBacks.ToString();
         public string Difficulty => Toolbox.Attributes.EnumDescriptionAttribute.GetDescription(stats.Difficulty);
 
+        public bool CurrentState
+        {
+            get => lastCurrentState;
+            set => SetCurrentState(value);
+        }
+
+        private void SetCurrentState(bool current)
+        {
+            if (current != lastCurrentState)
+            {
+                lastCurrentState = current;
+                this.stats = lastCurrentState ? currentStats : puzzleStats;
+
+                OnPropertyChanged(() => NumGivens);
+                OnPropertyChanged(() => NumSingles);
+                OnPropertyChanged(() => NumHiddenSingles);
+                OnPropertyChanged(() => NumNakedPairs);
+                OnPropertyChanged(() => NumHiddenPairs);
+                OnPropertyChanged(() => NumBoxLineReduction);
+                OnPropertyChanged(() => NumPointingPairTriple);
+                OnPropertyChanged(() => NumGuesses);
+                OnPropertyChanged(() => NumRollBacks);
+                OnPropertyChanged(() => Difficulty);
+            }
+
+        }
 
         protected override bool? Commit()
         {

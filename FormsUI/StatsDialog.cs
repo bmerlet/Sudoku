@@ -22,7 +22,12 @@ namespace FormsUI
             logic.CloseView = result => DialogResult = result == true ? DialogResult.OK : DialogResult.Cancel;
 
             InitializeComponent();
+            UpdateLabels();
+            checkBoxCurrentState.Checked = logic.CurrentState;
+        }
 
+        private void UpdateLabels()
+        {
             labelGivensVal.Text = logic.NumGivens;
             labelSinglesVal.Text = logic.NumSingles;
             labelHiddenSinglesVal.Text = logic.NumHiddenSingles;
@@ -32,6 +37,12 @@ namespace FormsUI
             labelPairPointingTripletsVal.Text = logic.NumPointingPairTriple;
             labelSolutionsVal.Text = logic.NumGuesses;
             labelDifficultyVal.Text = logic.Difficulty;
+        }
+
+        private void checkBoxCurrentState_CheckedChanged(object sender, EventArgs e)
+        {
+            logic.CurrentState = checkBoxCurrentState.Checked;
+            UpdateLabels();
         }
 
         private void buttonOK_Click(object sender, EventArgs e)

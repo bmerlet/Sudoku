@@ -9,8 +9,8 @@
 
     <!-- Key bindings -->
     <Window.InputBindings >
-        <KeyBinding Key="N" Modifiers="Ctrl"   Command="{Binding NewEasy}"/>
-        <KeyBinding Key="F2"                   Command="{Binding NewEasy}"/>
+        <KeyBinding Key="N" Modifiers="Ctrl"   Command="{Binding NewGame}"/>
+        <KeyBinding Key="F2"                   Command="{Binding NewGame}"/>
         <KeyBinding Key="Y" Modifiers="Ctrl"   Command="{Binding BoardLogic.Redo}"/>
         <KeyBinding Key="Z" Modifiers="Ctrl"   Command="{Binding BoardLogic.Undo}"/>
         <KeyBinding Key="C" Modifiers="Ctrl"   Command="{Binding BoardLogic.Check}"/>

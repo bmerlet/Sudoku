@@ -214,8 +214,18 @@ namespace Sudoku.UILogic
         //
         private void OnStats()
         {
-            var statsDialog = new StatsDialogLogic(puzzle.Statistics);
-            uiProvider.DisplayDialog(statsDialog);
+            if (userTable != null)
+            {
+                // Get stats for puzzle as it is now
+                var solvedPuzzle = creator.Solve(puzzle, true, true); 
+                if (solvedPuzzle == null)
+                {
+                    solvedPuzzle = puzzle;
+                }
+
+                var statsDialog = new StatsDialogLogic(puzzle.Statistics, solvedPuzzle.Statistics);
+                uiProvider.DisplayDialog(statsDialog);
+            }
         }
 
         //
