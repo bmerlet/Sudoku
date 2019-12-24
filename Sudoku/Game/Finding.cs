@@ -37,6 +37,18 @@ namespace Sudoku.Game
         }
     }
 
+    internal class FoundGuess : Finding
+    {
+        public FoundGuess(uint round)
+            : base(null, 0, round, EMarkType.GUESS)
+        { }
+
+        public override string ToString()
+        {
+            return "Take a guess!";
+        }
+    }
+
     internal class FoundImpossibility : Finding
     {
         public FoundImpossibility(Position position, uint value, uint round, EMarkType type)
@@ -45,7 +57,7 @@ namespace Sudoku.Game
 
         public override string ToString()
         {
-            return $"Found impossible value {Value} at {Position} because of {Type}";
+            return $"Found impossible value {Value} at {Position.ToReadableString()} because of {Type}";
         }
     }
 }

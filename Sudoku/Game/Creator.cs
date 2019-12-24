@@ -56,7 +56,7 @@ namespace Sudoku.Game
 
             // Solve all the way. This invents a puzzle and returns it completely solved.
             // Do not keep stats 
-            puzzle = Solve(puzzle, false, false);
+            puzzle = Solve(puzzle, uint.MaxValue, false);
 
             var solveTime = TrackTiming ? stopwatch.Elapsed : TimeSpan.MinValue;
 
@@ -120,7 +120,7 @@ namespace Sudoku.Game
 
                 // See if we can solve in one, and keep track of the stats so that we can assess the difficulty
                 bool putValuesBack = false;
-                var tmpSolvedPuzzle = Solve(puzzle, true, true);
+                var tmpSolvedPuzzle = Solve(puzzle, difficulty == EDifficulty.EXPERT ? 1u : 0u, true);
                 if (tmpSolvedPuzzle == null)
                 {
                     // Nope, put the values back

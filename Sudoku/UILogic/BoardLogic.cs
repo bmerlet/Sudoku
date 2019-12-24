@@ -217,7 +217,7 @@ namespace Sudoku.UILogic
             if (userTable != null)
             {
                 // Get stats for puzzle as it is now
-                var solvedPuzzle = creator.Solve(puzzle, true, true); 
+                var solvedPuzzle = creator.Solve(puzzle, puzzle.Statistics.Difficulty == EDifficulty.EXPERT ? 1u : 0u, true); 
                 if (solvedPuzzle == null)
                 {
                     solvedPuzzle = puzzle;

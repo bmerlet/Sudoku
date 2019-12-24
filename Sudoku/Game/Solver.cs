@@ -38,7 +38,7 @@ namespace Sudoku.Game
         /// Entry point to solve a sudoku puzzle
         /// </summary>
         /// <returns>puzzle if solved, null otherwise</returns>
-        public Puzzle Solve(Puzzle puzzle, bool withoutGuesses, bool keepStats)
+        public Puzzle Solve(Puzzle puzzle, uint maxGuesses, bool keepStats)
         {
             var findings = keepStats ? new List<Finding>() : null;
 
@@ -50,7 +50,7 @@ namespace Sudoku.Game
             }
 
             // Now Solve the puzzle
-            if (!Solve(2, withoutGuesses, findings))
+            if (!Solve(2, maxGuesses, findings))
             {
                 // Imppossible puzzle
                 return null;
@@ -96,7 +96,12 @@ namespace Sudoku.Game
                 if (findings == null)
                 {
                     // Unsolvable puzzle
-                    return null;
+                    if (puzzle.Statistics.Difficulty != EDifficulty.EXPERT)
+                    {
+                        return null;
+                    }
+
+                    findings = new Finding[] { new FoundGuess(2) };
                 }
 
                 // See if we have a marking
@@ -123,6 +128,10 @@ namespace Sudoku.Game
                     if (finding is FoundValue fv)
                     {
                         return new Hint(fv.Position, fv.Value, explanation.ToString());
+                    }
+                    else if (finding is FoundGuess fg)
+                    {
+                        return new Hint(Position.GetCellFromCell(0), 0, explanation.ToString());
                     }
                 }
             }
@@ -174,7 +183,7 @@ namespace Sudoku.Game
         //
         // Recursively solve a puzzle
         //
-        private bool Solve(uint round, bool withoutGuesses, List<Finding> findings)
+        private bool Solve(uint round, uint maxGuesses, List<Finding> findings)
         {
             // Exhaust all deductions
             while (true)
@@ -201,17 +210,17 @@ namespace Sudoku.Game
                 if (IsImpossible)
                 {
                     // If we are hollowing out a puzzle that we know is possible, we have a bug
-                    if (withoutGuesses)
-                    {
-                        throw new InvalidOperationException("Known possible puzzle found impossible");
-                    }
+                    //if (maxGuesses == 0)
+                    //{
+                    //    throw new InvalidOperationException("Known possible puzzle found impossible");
+                    //}
                     return false;
                 }
             }
 
             // We can't solve without guessing, meaning the puzzle has
             // more than one solution.
-            if (withoutGuesses)
+            if (maxGuesses == 0)
             {
                 // Indicate that the puzzle has more than one solution
                 return false;
@@ -226,11 +235,18 @@ namespace Sudoku.Game
             uint guessRound = round + 1;
             uint nextRound = round + 2;
 
+            var subFindings = findings == null ? null : new List<Finding>();
+
             // Try all guesses
             foreach (var guess in guesses)
             {
                 // Make a guess
                 Mark(guess.Key, guess.Value, guessRound, EMarkType.GUESS);
+                if (subFindings != null)
+                {
+                    subFindings.Clear();
+                    subFindings.Add(new FoundValue(guess.Key, guess.Value, round, EMarkType.GUESS));
+                }
 
                 // Not sure this actually happens
                 if (IsImpossible)
@@ -245,8 +261,13 @@ namespace Sudoku.Game
                 }
 
                 // Solve recursively
-                if (Solve(nextRound, withoutGuesses, findings))
+                if (Solve(nextRound, maxGuesses - 1, subFindings))
                 {
+                    // Solved!
+                    if (findings != null & subFindings != null)
+                    {
+                        findings.AddRange(subFindings);
+                    }
                     return true;
                 }
 
