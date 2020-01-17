@@ -37,6 +37,7 @@
             this.buttonNewPuzzle = new System.Windows.Forms.Button();
             this.buttonRedo = new System.Windows.Forms.Button();
             this.tableLayoutPanelBoard = new System.Windows.Forms.TableLayoutPanel();
+            this.buttonHelp = new System.Windows.Forms.Button();
             this.tableLayoutPanelMain.SuspendLayout();
             this.tableLayoutPanelButtons.SuspendLayout();
             this.SuspendLayout();
@@ -61,11 +62,12 @@
             this.tableLayoutPanelButtons.ColumnCount = 2;
             this.tableLayoutPanelButtons.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanelButtons.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanelButtons.Controls.Add(this.buttonHelp, 0, 4);
             this.tableLayoutPanelButtons.Controls.Add(this.buttonUndo, 0, 6);
             this.tableLayoutPanelButtons.Controls.Add(this.buttonReset, 0, 5);
-            this.tableLayoutPanelButtons.Controls.Add(this.buttonStats, 0, 4);
-            this.tableLayoutPanelButtons.Controls.Add(this.buttonNewPuzzle, 0, 3);
             this.tableLayoutPanelButtons.Controls.Add(this.buttonRedo, 1, 6);
+            this.tableLayoutPanelButtons.Controls.Add(this.buttonNewPuzzle, 0, 2);
+            this.tableLayoutPanelButtons.Controls.Add(this.buttonStats, 0, 3);
             this.tableLayoutPanelButtons.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanelButtons.Location = new System.Drawing.Point(573, 3);
             this.tableLayoutPanelButtons.Name = "tableLayoutPanelButtons";
@@ -77,6 +79,7 @@
             this.tableLayoutPanelButtons.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 8.54701F));
             this.tableLayoutPanelButtons.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 8.54701F));
             this.tableLayoutPanelButtons.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 8.54701F));
+            this.tableLayoutPanelButtons.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanelButtons.Size = new System.Drawing.Size(124, 549);
             this.tableLayoutPanelButtons.TabIndex = 0;
             // 
@@ -107,7 +110,7 @@
             // 
             this.buttonStats.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.tableLayoutPanelButtons.SetColumnSpan(this.buttonStats, 2);
-            this.buttonStats.Location = new System.Drawing.Point(9, 414);
+            this.buttonStats.Location = new System.Drawing.Point(9, 368);
             this.buttonStats.Name = "buttonStats";
             this.buttonStats.Size = new System.Drawing.Size(105, 28);
             this.buttonStats.TabIndex = 3;
@@ -119,7 +122,7 @@
             // 
             this.buttonNewPuzzle.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.tableLayoutPanelButtons.SetColumnSpan(this.buttonNewPuzzle, 2);
-            this.buttonNewPuzzle.Location = new System.Drawing.Point(9, 368);
+            this.buttonNewPuzzle.Location = new System.Drawing.Point(9, 322);
             this.buttonNewPuzzle.Name = "buttonNewPuzzle";
             this.buttonNewPuzzle.Size = new System.Drawing.Size(105, 28);
             this.buttonNewPuzzle.TabIndex = 2;
@@ -166,6 +169,18 @@
             this.tableLayoutPanelBoard.Size = new System.Drawing.Size(564, 549);
             this.tableLayoutPanelBoard.TabIndex = 1;
             // 
+            // buttonHelp
+            // 
+            this.buttonHelp.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.tableLayoutPanelButtons.SetColumnSpan(this.buttonHelp, 2);
+            this.buttonHelp.Location = new System.Drawing.Point(9, 414);
+            this.buttonHelp.Name = "buttonHelp";
+            this.buttonHelp.Size = new System.Drawing.Size(105, 28);
+            this.buttonHelp.TabIndex = 7;
+            this.buttonHelp.Text = "Help";
+            this.buttonHelp.UseVisualStyleBackColor = true;
+            this.buttonHelp.Click += new System.EventHandler(this.buttonHelp_Click);
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -191,6 +206,7 @@
         private System.Windows.Forms.Button buttonNewPuzzle;
         private System.Windows.Forms.Button buttonRedo;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanelBoard;
+        private System.Windows.Forms.Button buttonHelp;
     }
 }
 

@@ -87,6 +87,11 @@ namespace FormsUI
             boardLogic.Stats.Execute();
         }
 
+        private void buttonHelp_Click(object sender, EventArgs e)
+        {
+            logic.Help.Execute();
+        }
+
         private void ButtonReset_Click(object sender, EventArgs e)
         {
             boardLogic.Reset.Execute();
@@ -244,11 +249,9 @@ namespace FormsUI
 
             if (logic is InfoDialogLogic infoDialogLogic)
             {
-                MessageBox.Show(infoDialogLogic.Info, infoDialogLogic.Title);
-                return true;
+                dialog = new InfoDialog(infoDialogLogic);
             }
-
-            if (logic is NewGameDialogLogic newGameDialogLogic)
+            else if (logic is NewGameDialogLogic newGameDialogLogic)
             {
                 dialog = new NewGameDialog(newGameDialogLogic);
             }

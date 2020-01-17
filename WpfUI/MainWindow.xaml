@@ -120,12 +120,14 @@
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <Button Style="{StaticResource CommandButton}" Grid.ColumnSpan="2" Grid.Row="1" Content="New Puzzle..." Command="{Binding NewGame}"/>
             <Button Style="{StaticResource CommandButton}" Grid.ColumnSpan="2" Grid.Row="2" Content="Stats..." Command="{Binding BoardLogic.Stats}"/>
-            <Button Style="{StaticResource CommandButton}" Grid.ColumnSpan="2" Grid.Row="3" Content="Reset" Command="{Binding BoardLogic.Reset}"/>
-            <Button Style="{StaticResource CommandButton}" Grid.Row="6" Grid.Column="0" Content="&lt;-" Command="{Binding BoardLogic.Undo}"/>
-            <Button Style="{StaticResource CommandButton}" Grid.Row="6" Grid.Column="1" Content="-&gt;" Command="{Binding BoardLogic.Redo}"/>
+            <Button Style="{StaticResource CommandButton}" Grid.ColumnSpan="2" Grid.Row="3" Content="Help..." Command="{Binding Help}"/>
+            <Button Style="{StaticResource CommandButton}" Grid.ColumnSpan="2" Grid.Row="4" Content="Reset" Command="{Binding BoardLogic.Reset}"/>
+            <Button Style="{StaticResource CommandButton}" Grid.Row="5" Grid.Column="0" Content="&lt;-" Command="{Binding BoardLogic.Undo}"/>
+            <Button Style="{StaticResource CommandButton}" Grid.Row="5" Grid.Column="1" Content="-&gt;" Command="{Binding BoardLogic.Redo}"/>
         </Grid>
         <Grid x:Name="board" DataContext="{Binding BoardLogic}" Margin="20">
             <Grid.Resources>
