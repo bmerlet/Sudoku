@@ -4,9 +4,15 @@ In the same directory as the one this file is in, run:
 
 msbuild SudokuLinux.sln
 
+Then to run:
+
+mono FormsUI/bin/Debug/FormsUI.exe
+
 To build on Windows, open Sudoku.sln with Visual Studio 2017 or later
 and build the solution. Alternatively, run:
 msbuild.exe Sudoku.sln
+
+The executable is in WpfUI\bin\Debug\WpfUI.exe
 
 Enjoy!
 

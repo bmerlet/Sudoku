@@ -18,6 +18,7 @@ namespace FormsUI
         public InfoDialog(InfoDialogLogic logic)
         {
             this.logic = logic;
+            logic.CloseView = result => DialogResult = result == true ? DialogResult.OK : DialogResult.Cancel;
 
             InitializeComponent();
 
