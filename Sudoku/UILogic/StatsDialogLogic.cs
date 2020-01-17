@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Sudoku.Game;
-using Toolbox.UILogic.Dialogs;
 
 namespace Sudoku.UILogic
 {
@@ -32,7 +31,7 @@ namespace Sudoku.UILogic
         public string NumPointingPairTriple => stats.NumPointingPairTriple.ToString();
         public string NumGuesses => (stats.NumGuesses + 1).ToString();
         public string NumRollBacks => stats.NumRollBacks.ToString();
-        public string Difficulty => Toolbox.Attributes.EnumDescriptionAttribute.GetDescription(stats.Difficulty);
+        public string Difficulty => Toolbox.EnumDescriptionAttribute.GetDescription(stats.Difficulty);
 
         public bool CurrentState
         {

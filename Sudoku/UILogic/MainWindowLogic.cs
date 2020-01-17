@@ -5,8 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Sudoku.Game;
-using Toolbox.UILogic;
-using Toolbox.Models;
+using Toolbox;
 
 namespace Sudoku.UILogic
 {
@@ -126,6 +125,7 @@ namespace Sudoku.UILogic
             "either the zero numerical key or the delete key.\n\n" +
             "To mark or unmark a possible value for a cell, right click and select the desired number, or use the arrow\n" + 
             "keys to navigate to the desired cell and use the functions key F1 to F9.\n\n" +
+            "To undo a move use ^Z. To redo a move, use ^Y.\n" +
             "To check your deductions, use ^C; Incorrect deductions will become red.\n" +
             "To get a hint of which cell can be deduced next, use ^H\n" +
             "To get a detailed explanation of which cell can be deduced next, use ^Q\n";

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-using Toolbox.Attributes;
+using Toolbox;
 
 namespace Sudoku.Game
 {

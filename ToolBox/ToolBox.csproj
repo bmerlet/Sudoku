@@ -1,18 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{8FAD58EE-EE3B-457D-9F2B-5940BA43EBEE}</ProjectGuid>
+    <ProjectGuid>{9FF8BBCD-BC2A-448B-BFD6-AFCDF724DE23}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Sudoku</RootNamespace>
-    <AssemblyName>Sudoku</AssemblyName>
+    <RootNamespace>ToolBox</RootNamespace>
+    <AssemblyName>ToolBox</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -42,36 +41,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Game\Cell.cs" />
-    <Compile Include="Game\Creator.cs" />
-    <Compile Include="Game\Enums.cs" />
-    <Compile Include="Game\Finding.cs" />
-    <Compile Include="Game\Hint.cs" />
-    <Compile Include="Game\Position.cs" />
-    <Compile Include="Game\PositionRandomizer.cs" />
-    <Compile Include="Game\Puzzle.cs" />
-    <Compile Include="Game\Solver.cs" />
-    <Compile Include="Game\Statistics.cs" />
-    <Compile Include="Game\Table.cs" />
+    <Compile Include="EnumDescriptiopnAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UILogic\BoardLogic.cs" />
-    <Compile Include="UILogic\InfoDialogLogic.cs" />
-    <Compile Include="UILogic\IUIProvider.cs" />
-    <Compile Include="UILogic\LogEntry.cs" />
-    <Compile Include="UILogic\CommandBase.cs" />
-    <Compile Include="UILogic\LogicBase.cs" />
-    <Compile Include="UILogic\MainWindowLogic.cs" />
-    <Compile Include="UILogic\NewGameDialogLogic.cs" />
-    <Compile Include="UILogic\StatsDialogLogic.cs" />
-    <Compile Include="UILogic\UICellLogic.cs" />
-    <Compile Include="UILogic\Settings.cs" />
-    <Compile Include="UILogic\YesNoDialogLogic.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\ToolBox\ToolBox.csproj">
-      <Project>{9ff8bbcd-bc2a-448b-bfd6-afcdf724de23}</Project>
-      <Name>ToolBox</Name>
-    </ProjectReference>
+    <Compile Include="SettingsManager.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

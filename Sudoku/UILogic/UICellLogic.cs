@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Sudoku.Game;
-using Toolbox.UILogic;
 
 namespace Sudoku.UILogic
 {

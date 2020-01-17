@@ -14,7 +14,6 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 using Sudoku.UILogic;
-using Toolbox.UILogic.Dialogs;
 
 namespace WpfUI
 {

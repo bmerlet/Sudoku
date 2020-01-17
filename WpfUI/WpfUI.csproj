@@ -47,10 +47,6 @@
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
-    <Reference Include="Toolbox, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Toolbox\bin\Debug\Toolbox.dll</HintPath>
-    </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -138,6 +134,10 @@
     <ProjectReference Include="..\Sudoku\Sudoku.csproj">
       <Project>{675f4f02-ca16-461e-a9a1-89f1511a642a}</Project>
       <Name>Sudoku</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ToolBox\ToolBox.csproj">
+      <Project>{9ff8bbcd-bc2a-448b-bfd6-afcdf724de23}</Project>
+      <Name>ToolBox</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

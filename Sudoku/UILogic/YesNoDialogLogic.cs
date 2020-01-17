@@ -4,8 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using Toolbox.UILogic.Dialogs;
-
 namespace Sudoku.UILogic
 {
     public class YesNoDialogLogic : LogicDialogBase

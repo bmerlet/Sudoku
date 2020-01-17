@@ -10,7 +10,6 @@ using System.Windows.Forms;
 
 using Sudoku.Game;
 using Sudoku.UILogic;
-using Toolbox.UILogic.Dialogs;
 
 namespace FormsUI
 {

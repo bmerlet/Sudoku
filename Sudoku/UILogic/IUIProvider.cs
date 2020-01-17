@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Text;
 
-using Toolbox.UILogic.Dialogs;
-
 namespace Sudoku.UILogic
 {
     // Color scheme
